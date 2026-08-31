@@ -1,106 +1,23 @@
 import { FormEvent, useState } from "react";
 
 const EMAIL = "hello@shotbysrijan.com";
-const INSTAGRAM = "@shotbysrijan";
 
 export default function Contact() {
   const [sent, setSent] = useState(false);
-
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    const subject = encodeURIComponent(
-      `Hello from ${data.get("name")} — portfolio enquiry`
-    );
-    const body = encodeURIComponent(
-      `${data.get("message")}\n\n— ${data.get("name")} (${data.get("from")})`
-    );
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const subject = encodeURIComponent(`Hello from ${data.get("name")} — portfolio enquiry`);
+    const body = encodeURIComponent(`${data.get("message")}\n\n— ${data.get("name")} (${data.get("from")})`);
     window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
     setSent(true);
   }
-
-  const inputClass =
-    "w-full border border-ink-line bg-ink-soft px-4 py-3 text-sm text-paper placeholder:text-paper-dim/50 outline-none transition-colors focus:border-safelight";
-
+  const inputClass = "w-full border-b border-white/40 bg-transparent px-0 py-4 text-sm text-white placeholder:text-white/35 outline-none transition-colors focus:border-accent";
   return (
-    <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-20">
-      <p className="text-[11px] uppercase tracking-[0.4em] text-paper-dim">
-        say hello
-      </p>
-      <h1 className="mt-3 font-display text-4xl font-light md:text-6xl">
-        Get in <span className="italic text-safelight">touch</span>
-      </h1>
-      <p className="mt-4 max-w-lg text-sm leading-relaxed text-paper-dim">
-        Portraits, collaborations, or just talking cameras and light — the
-        inbox is always open. (Contact details below are placeholders; swap in
-        your own.)
-      </p>
-
-      <div className="mt-12 grid gap-12 md:grid-cols-2">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-paper-dim">
-              your name
-            </label>
-            <input id="name" name="name" required className={inputClass} placeholder="Jane Doe" />
-          </div>
-          <div>
-            <label htmlFor="from" className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-paper-dim">
-              your email
-            </label>
-            <input id="from" name="from" type="email" required className={inputClass} placeholder="jane@example.com" />
-          </div>
-          <div>
-            <label htmlFor="message" className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-paper-dim">
-              message
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              required
-              rows={6}
-              className={inputClass}
-              placeholder="Hi Srijan, I saw your portfolio and…"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full border border-paper/70 py-3.5 text-[11px] uppercase tracking-[0.3em] transition-colors duration-300 hover:border-safelight hover:bg-safelight hover:text-ink"
-          >
-            {sent ? "opening your mail app…" : "send message"}
-          </button>
-          <p className="text-[10px] text-paper-dim/60">
-            This opens your mail app with the message pre-filled — no data is
-            stored anywhere.
-          </p>
-        </form>
-
-        <div className="space-y-8 md:border-l md:border-ink-line/60 md:pl-12">
-          <div>
-            <h2 className="text-[10px] uppercase tracking-[0.3em] text-paper-dim">email</h2>
-            <a
-              href={`mailto:${EMAIL}`}
-              className="mt-2 inline-block font-display text-2xl font-light italic transition-colors hover:text-safelight"
-            >
-              {EMAIL}
-            </a>
-          </div>
-          <div>
-            <h2 className="text-[10px] uppercase tracking-[0.3em] text-paper-dim">instagram</h2>
-            <span className="mt-2 inline-block font-display text-2xl font-light italic text-paper-dim">
-              {INSTAGRAM}
-            </span>
-          </div>
-          <div>
-            <h2 className="text-[10px] uppercase tracking-[0.3em] text-paper-dim">based in</h2>
-            <p className="mt-2 font-display text-2xl font-light italic">India</p>
-          </div>
-          <div className="border-t border-ink-line/60 pt-8 text-xs leading-relaxed text-paper-dim">
-            Usually replies within a day or two — sooner if the light is bad
-            outside.
-          </div>
-        </div>
-      </div>
+    <div className="mx-auto max-w-[1440px] px-5 py-14 md:px-10 md:py-20 lg:px-16">
+      <header className="grid gap-8 border-b border-line pb-12 md:grid-cols-[1fr_1.5fr] md:items-end"><p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted">04 / Open line</p><h1 className="font-serif text-6xl font-light leading-[0.82] md:text-9xl">Let's<br /><span className="italic text-accent">talk.</span></h1></header>
+      <section className="grid gap-14 py-16 md:grid-cols-[0.7fr_1.3fr] md:py-24"><div><p className="max-w-sm font-serif text-3xl font-light leading-tight md:text-4xl">Have a project, a question, or a good patch of light to share?</p><div className="mt-12 space-y-8"><div><p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-muted">Email</p><a href={`mailto:${EMAIL}`} className="mt-2 inline-block font-serif text-2xl italic transition-colors hover:text-accent">{EMAIL}</a></div><div><p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-muted">Elsewhere</p><p className="mt-2 font-serif text-2xl italic text-muted">@shotbysrijan</p></div><div><p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-muted">Based in</p><p className="mt-2 font-serif text-2xl italic">India</p></div></div></div><form onSubmit={handleSubmit} className="max-w-2xl"><div className="grid gap-8 md:grid-cols-2"><label className="text-[9px] font-semibold uppercase tracking-[0.25em] text-muted">Name<input id="name" name="name" required className={inputClass} placeholder="Your name" /></label><label className="text-[9px] font-semibold uppercase tracking-[0.25em] text-muted">Email<input id="from" name="from" type="email" required className={inputClass} placeholder="you@example.com" /></label></div><label className="mt-10 block text-[9px] font-semibold uppercase tracking-[0.25em] text-muted">Message<textarea id="message" name="message" required rows={5} className={`${inputClass} resize-none`} placeholder="Tell me what you're thinking..." /></label><div className="mt-10 flex items-center justify-between gap-6"><button type="submit" className="group flex items-center gap-4 text-[10px] font-semibold uppercase tracking-[0.25em]"><span className="flex h-12 w-12 items-center justify-center rounded-full border border-white transition-colors group-hover:border-accent group-hover:bg-accent group-hover:text-black">↗</span>{sent ? "Opening mail app" : "Send message"}</button><span className="hidden text-[9px] uppercase tracking-[0.2em] text-muted sm:block">No forms stored · mailto</span></div></form></section>
+      <section className="border-t border-line py-12"><p className="font-serif text-3xl font-light italic md:text-5xl">Good work starts with a conversation.</p></section>
     </div>
   );
 }

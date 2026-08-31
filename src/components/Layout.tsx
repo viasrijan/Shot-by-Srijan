@@ -1,42 +1,22 @@
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
 const navItems = [
-  { to: "/", label: "Home" },
-  { to: "/gallery", label: "Gallery" },
-  { to: "/about", label: "About" },
-  { to: "/contact", label: "Contact" },
+  { to: "/", label: "Index", number: "01" },
+  { to: "/gallery", label: "Works", number: "02" },
+  { to: "/about", label: "Notes", number: "03" },
+  { to: "/contact", label: "Write", number: "04" },
 ];
 
-function Monogram() {
+function Wordmark() {
   return (
     <Link to="/" className="group flex items-center gap-3" aria-label="Shot by Srijan — home">
-      <svg viewBox="0 0 64 64" className="h-9 w-9 shrink-0">
-        <rect width="64" height="64" rx="14" className="fill-ink-soft" />
-        <path
-          d="M20 14 H14 V20 M44 14 H50 V20 M20 50 H14 V44 M44 50 H50 V44"
-          className="stroke-safelight"
-          strokeWidth="3"
-          fill="none"
-          strokeLinecap="round"
-        />
-        <text
-          x="32"
-          y="42"
-          fontFamily="Fraunces, Georgia, serif"
-          fontStyle="italic"
-          fontSize="27"
-          className="fill-paper"
-          textAnchor="middle"
-        >
-          S
-        </text>
-      </svg>
-      <span className="leading-none">
-        <span className="block text-[10px] uppercase tracking-[0.35em] text-paper-dim">
-          Shot by
-        </span>
-        <span className="block font-display text-xl italic">Srijan</span>
+      <span className="flex h-10 w-10 items-center justify-center border border-white font-serif text-xl italic text-white transition-colors group-hover:border-accent group-hover:text-accent">
+        S
+      </span>
+      <span className="hidden leading-none sm:block">
+        <span className="block text-[9px] font-semibold uppercase tracking-[0.3em] text-muted">Shot by</span>
+        <span className="mt-1 block font-serif text-lg italic">Srijan</span>
       </span>
     </Link>
   );
@@ -46,63 +26,44 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [location.pathname]);
+  useEffect(() => setMenuOpen(false), [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-ink text-paper">
-      <div className="grain" aria-hidden="true" />
+    <div className="min-h-screen bg-black text-white">
+      <aside className="fixed inset-y-0 left-0 z-50 hidden w-[88px] flex-col items-center justify-between border-r border-line bg-black py-7 lg:flex">
+        <Wordmark />
+        <nav className="flex flex-col items-center gap-8">
+          {navItems.map((item) => (
+            <NavLink key={item.to} to={item.to} className="group flex flex-col items-center gap-2" aria-label={item.label}>
+              {({ isActive }) => (
+                <>
+                  <span className={`text-[9px] font-semibold tracking-[0.16em] transition-colors ${isActive ? "text-accent" : "text-muted group-hover:text-white"}`}>
+                    {item.number}
+                  </span>
+                  <span className={`vertical-label text-[9px] uppercase tracking-[0.22em] transition-colors ${isActive ? "text-accent" : "text-muted group-hover:text-white"}`}>
+                    {item.label}
+                  </span>
+                  <span className={`h-1 w-1 rounded-full transition-colors ${isActive ? "bg-accent" : "bg-transparent group-hover:bg-white"}`} />
+                </>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+        <span className="vertical-label text-[8px] uppercase tracking-[0.3em] text-muted">India · 2023</span>
+      </aside>
 
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-ink-line/60 bg-ink/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 md:px-8">
-          <Monogram />
-          <nav className="hidden items-center gap-8 md:flex">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                  `text-[11px] uppercase tracking-[0.3em] transition-colors duration-300 ${
-                    isActive ? "text-safelight" : "text-paper-dim hover:text-paper"
-                  }`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-          <button
-            className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden"
-            onClick={() => setMenuOpen((v) => !v)}
-            aria-label="Toggle menu"
-          >
-            <span
-              className={`h-px w-6 bg-paper transition-transform duration-300 ${
-                menuOpen ? "translate-y-[3.5px] rotate-45" : ""
-              }`}
-            />
-            <span
-              className={`h-px w-6 bg-paper transition-transform duration-300 ${
-                menuOpen ? "-translate-y-[3.5px] -rotate-45" : ""
-              }`}
-            />
-          </button>
-        </div>
+      <header className="sticky top-0 z-40 flex h-[76px] items-center justify-between border-b border-line bg-black px-5 lg:hidden">
+        <Wordmark />
+        <button onClick={() => setMenuOpen((value) => !value)} className="flex h-10 w-10 flex-col items-end justify-center gap-2" aria-label="Toggle menu">
+          <span className={`h-px bg-white transition-all ${menuOpen ? "w-6 -translate-y-[-5px] -rotate-45" : "w-6"}`} />
+          <span className={`h-px bg-white transition-all ${menuOpen ? "w-6 translate-y-[-5px] rotate-45" : "w-4"}`} />
+        </button>
         {menuOpen && (
-          <nav className="border-t border-ink-line/60 px-5 pb-6 pt-4 md:hidden">
-            <div className="flex flex-col gap-4">
+          <nav className="absolute inset-x-0 top-[76px] border-b border-line bg-black px-5 py-7">
+            <div className="grid grid-cols-2 gap-5">
               {navItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive }) =>
-                    `font-display text-2xl italic ${
-                      isActive ? "text-safelight" : "text-paper"
-                    }`
-                  }
-                >
-                  {item.label}
+                <NavLink key={item.to} to={item.to} className="flex items-baseline gap-3 font-serif text-2xl italic">
+                  <span className="font-sans text-[10px] not-italic text-accent">{item.number}</span>{item.label}
                 </NavLink>
               ))}
             </div>
@@ -110,24 +71,15 @@ export default function Layout({ children }: { children: ReactNode }) {
         )}
       </header>
 
-      <main className="pt-[72px]">{children}</main>
+      <main className="lg:ml-[88px]">{children}</main>
 
-      <footer className="border-t border-ink-line/60">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-8 text-[11px] uppercase tracking-[0.3em] text-paper-dim md:flex-row md:px-8">
-          <span>© {new Date().getFullYear()} Shot by Srijan</span>
-          <span className="font-display normal-case italic tracking-normal text-paper-dim/70">
-            exposed, developed, delivered
-          </span>
-          <div className="flex gap-6">
-            {navItems.slice(1).map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className="transition-colors hover:text-paper"
-              >
-                {item.label}
-              </Link>
-            ))}
+      <footer className="border-t border-line lg:ml-[88px]">
+        <div className="mx-auto grid max-w-[1440px] gap-8 px-5 py-12 md:grid-cols-3 md:px-10">
+          <div><Wordmark /></div>
+          <p className="max-w-xs text-xs leading-relaxed text-muted">A growing archive of small observations, photographed by Srijan.</p>
+          <div className="flex items-start justify-start gap-6 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted md:justify-end">
+            <Link to="/gallery" className="transition-colors hover:text-white">Works</Link>
+            <Link to="/contact" className="transition-colors hover:text-accent">Write</Link>
           </div>
         </div>
       </footer>

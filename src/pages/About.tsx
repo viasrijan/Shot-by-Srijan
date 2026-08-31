@@ -1,93 +1,18 @@
 import { photos, formatCamera } from "../data/photos";
 
 const portrait = photos[0];
-
-const gear = [
-  { name: "Sony ZV-E10", note: "the everyday companion — mostly the 16-50mm kit" },
-  { name: "Sony ZV-1", note: "pocket-sized, always with me" },
-  { name: "Adobe Lightroom", note: "where every frame finds its final look" },
-];
-
 const chapters = [
-  {
-    year: "2022",
-    text: "Picked up the ZV-1 and started shooting seriously — early mornings, empty streets, first attempts at golden hour.",
-  },
-  {
-    year: "2023",
-    text: "Added the ZV-E10. Learned to wait for light instead of chasing it, and to come home with fewer, better frames.",
-  },
-  {
-    year: "Now",
-    text: "Still learning. Still walking. This portfolio is the contact sheet so far.",
-  },
+  { year: "01", title: "Start with looking", text: "Before the camera, there is attention. I walk, wait and let the frame find me — usually somewhere between the obvious and the overlooked." },
+  { year: "02", title: "Keep it close", text: "Most of these images were made close to home. Familiar streets, garden corners, a face that pauses for half a second. Distance is not required for wonder." },
+  { year: "03", title: "Make room for chance", text: "The best frames are rarely the ones I planned. A blur, a glance, a patch of light — the small accidents are often the whole point." },
 ];
 
 export default function About() {
   return (
-    <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-20">
-      <p className="text-[11px] uppercase tracking-[0.4em] text-paper-dim">
-        behind the lens
-      </p>
-      <h1 className="mt-3 font-display text-4xl font-light md:text-6xl">
-        About <span className="italic text-safelight">Srijan</span>
-      </h1>
-
-      <div className="mt-12 grid gap-10 md:grid-cols-[2fr_3fr]">
-        <figure className="group relative overflow-hidden">
-          <img
-            src={portrait.thumb}
-            alt="A frame by Srijan"
-            className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-          />
-          <figcaption className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-ink to-transparent p-4 text-[10px] uppercase tracking-[0.3em] text-paper-dim">
-            {formatCamera(portrait.camera)} · {portrait.date}
-          </figcaption>
-        </figure>
-
-        <div>
-          <p className="text-lg leading-relaxed text-paper">
-            I'm Srijan — a photographer who fell for the way light lands on
-            ordinary things. I photograph streets, travels, and the quiet
-            moments in between, mostly on weekend walks and early-morning
-            detours.
-          </p>
-          <p className="mt-5 leading-relaxed text-paper-dim">
-            This site is my open contact sheet: {photos.length} frames I keep
-            coming back to. No grand themes — just curiosity, patience, and a
-            fondness for golden hour. (Swap this paragraph for your own story —
-            it's a placeholder.)
-          </p>
-
-          <div className="mt-10 space-y-6 border-t border-ink-line/60 pt-8">
-            {chapters.map((c) => (
-              <div key={c.year} className="flex gap-6">
-                <span className="w-14 shrink-0 font-display text-xl italic text-amber">
-                  {c.year}
-                </span>
-                <p className="text-sm leading-relaxed text-paper-dim">{c.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <section className="mt-20">
-        <h2 className="font-display text-2xl font-light italic md:text-3xl">
-          The kit
-        </h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {gear.map((g) => (
-            <div
-              key={g.name}
-              className="border border-ink-line/60 p-6 transition-colors duration-300 hover:border-safelight/60"
-            >
-              <div className="font-display text-xl italic">{g.name}</div>
-              <p className="mt-2 text-xs leading-relaxed text-paper-dim">{g.note}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+    <div className="mx-auto max-w-[1440px] px-5 py-14 md:px-10 md:py-20 lg:px-16">
+      <header className="flex items-end justify-between border-b border-line pb-8"><div><p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted">03 / Notes from behind the camera</p><h1 className="mt-8 font-serif text-6xl font-light leading-[0.82] md:text-9xl">A little<br /><span className="italic text-accent">context.</span></h1></div><span className="hidden font-serif text-8xl font-light italic text-white/20 md:block">S</span></header>
+      <section className="grid gap-12 py-16 md:grid-cols-[0.8fr_1.2fr] md:py-24"><div className="relative"><img src={portrait.src} alt="A frame by Srijan" className="aspect-[4/5] w-full object-cover grayscale-[15%]" /><span className="absolute -bottom-5 -right-2 font-serif text-7xl italic text-accent md:-right-8 md:text-9xl">01</span></div><div className="flex flex-col justify-between"><div><p className="max-w-2xl font-serif text-3xl font-light leading-tight md:text-5xl">I'm Srijan. I photograph the things that ask to be noticed twice.</p><p className="mt-8 max-w-lg text-sm leading-7 text-muted">Cats that hold a stare. Flowers at the end of the day. A passing train becoming a line of color. This is an open archive of those pauses — made with a Sony ZV-E10, a ZV-1 and a willingness to take the long way home.</p></div><div className="mt-14 border-t border-line pt-6"><p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-muted">Current tools</p><div className="mt-4 flex flex-wrap gap-3"><span className="border border-line px-3 py-2 text-[10px] font-semibold">Sony ZV-E10</span><span className="border border-line px-3 py-2 text-[10px] font-semibold">Sony ZV-1</span><span className="border border-line px-3 py-2 text-[10px] font-semibold">Lightroom</span></div><p className="mt-5 text-[10px] uppercase tracking-[0.2em] text-muted">{formatCamera(portrait.camera)} · {portrait.date} · {photos.length} frames</p></div></div></section>
+      <section className="border-t border-line py-14 md:py-20"><div className="mb-10 flex items-end justify-between"><h2 className="font-serif text-4xl font-light md:text-6xl">The <span className="italic text-accent">practice</span></h2><span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-muted">A short list</span></div><div className="divide-y divide-white/20">{chapters.map((chapter) => <article key={chapter.year} className="grid gap-4 py-8 md:grid-cols-[0.25fr_0.75fr_1fr]"><span className="font-serif text-3xl italic text-accent">{chapter.year}</span><h3 className="font-serif text-2xl font-light italic">{chapter.title}</h3><p className="max-w-md text-sm leading-7 text-muted">{chapter.text}</p></article>)}</div></section>
     </div>
   );
 }
