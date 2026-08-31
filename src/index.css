@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0e0d0b;
+  --color-ink-soft: #161410;
+  --color-ink-line: #2a2620;
+  --color-paper: #ece6da;
+  --color-paper-dim: #a89f8d;
+  --color-safelight: #c2452d;
+  --color-amber: #c98a3d;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-safelight);
+  color: var(--color-paper);
+}
+
+/* film grain overlay */
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* sprocket film strip edge */
+.sprockets {
+  background-image: radial-gradient(
+    circle,
+    transparent 0,
+    transparent 100%
+  );
+}
+
+/* ken burns for hero */
+@keyframes kenburns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.08) translate(-1%, -1.5%);
+  }
+}
+.kenburns {
+  animation: kenburns 24s ease-in-out infinite alternate;
+}
+
+/* page transition */
+@keyframes pagein {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.pagein {
+  animation: pagein 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* marquee */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee 28s linear infinite;
+}
+
+/* reveal on load */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rise {
+  animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* viewfinder corner brackets */
+.vf-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-color: var(--color-paper);
+  border-style: solid;
+  border-width: 0;
+}
+
+/* lightbox enter */
+@keyframes lb-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.lb-in {
+  animation: lb-in 0.25s ease-out both;
+}
+
+/* custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ink);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-line);
+  border-radius: 5px;
+}

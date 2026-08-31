@@ -1,0 +1,7 @@
+{
+  "deploy": {
+    "type": "static",
+    "rootDir": ".",
+    "outputDir": "dist"
+  }
+}
