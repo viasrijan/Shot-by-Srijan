@@ -22,7 +22,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
     <div className="viewer" role="dialog" aria-modal="true" aria-label="Fullscreen image viewer" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }} onTouchStart={(event) => { touchStart.current = event.touches[0]?.clientX ?? null; }} onTouchEnd={(event) => { if (touchStart.current === null) return; const distance = (event.changedTouches[0]?.clientX ?? 0) - touchStart.current; if (Math.abs(distance) > 50) (distance > 0 ? prev : next)(); touchStart.current = null; }}>
       <button type="button" className="viewer__close" onClick={onClose} aria-label="Close viewer">×</button>
       <button type="button" onClick={prev} className="viewer__arrow viewer__arrow--prev" aria-label="Previous image">←</button>
-      <img key={photo.src} src={photo.src} alt="" className="viewer__image" />
+      <img key={photo.src} src={photo.src} alt={photo.title} className="viewer__image" />
       <button type="button" onClick={next} className="viewer__arrow viewer__arrow--next" aria-label="Next image">→</button>
     </div>
   );

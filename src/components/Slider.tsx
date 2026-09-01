@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { type Photo } from "../data/photos";
+import { formatCamera, type Photo } from "../data/photos";
 import HandFrame from "./HandFrame";
 
 interface SliderProps {
@@ -28,6 +28,10 @@ export default function Slider({ photos, onOpen }: SliderProps) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      <div className="slider__heading">
+        <span>01 — Selected frames</span>
+        <span>{String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}</span>
+      </div>
       <div
         className="slider__stage"
         onTouchStart={(event) => {
@@ -51,7 +55,7 @@ export default function Slider({ photos, onOpen }: SliderProps) {
                 aria-label="Open image larger"
                 tabIndex={i === index ? 0 : -1}
               >
-                <img src={photo.thumb} alt="" loading={i === 0 ? "eager" : "lazy"} draggable={false} />
+                <img src={photo.thumb} alt={photo.title} loading={i === 0 ? "eager" : "lazy"} draggable={false} />
                 <HandFrame variant={i % 3} />
               </button>
             </div>
@@ -78,6 +82,10 @@ export default function Slider({ photos, onOpen }: SliderProps) {
             aria-label={`Photograph ${i + 1} of ${count}`}
           />
         ))}
+      </div>
+      <div className="slider__caption" aria-live="polite">
+        <div><strong>{photos[index].title}</strong><span>{photos[index].category}</span></div>
+        <span>{formatCamera(photos[index].camera)}</span>
       </div>
     </section>
   );

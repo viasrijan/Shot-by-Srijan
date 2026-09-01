@@ -31,10 +31,15 @@ export default function Home() {
     <div className="archive">
       <section className="hero">
         <Reveal>
+          <p className="hero__eyebrow">Independent photo journal</p>
           <h1>Shot by Srijan</h1>
           <svg className="hero__underline" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
             <path d="M1 5.6 C 22 3.4, 48 3.1, 99 4.8" />
           </svg>
+          <div className="hero__bottom">
+            <p>Observations of ordinary light, movement, and the small details worth holding on to.</p>
+            <span>Scroll to explore</span>
+          </div>
         </Reveal>
       </section>
 
