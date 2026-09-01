@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { CSSProperties, ReactNode, useEffect, useRef } from "react";
 
 interface RevealProps {
   children: ReactNode;
@@ -28,7 +28,7 @@ export default function Reveal({ children, className = "", delay = 0 }: RevealPr
   }, []);
 
   return (
-    <div ref={ref} className={`reveal ${className}`} style={{ "--delay": `${delay}ms` } as React.CSSProperties}>
+    <div ref={ref} className={`reveal ${className}`} style={{ "--delay": `${delay}ms` } as CSSProperties}>
       {children}
     </div>
   );
