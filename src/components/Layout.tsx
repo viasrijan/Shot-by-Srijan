@@ -1,87 +1,85 @@
 import { ReactNode, useEffect, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
 
-const navItems = [
-  { to: "/", label: "Index", number: "01" },
-  { to: "/gallery", label: "Works", number: "02" },
-  { to: "/about", label: "Notes", number: "03" },
-  { to: "/contact", label: "Write", number: "04" },
-];
+type Theme = "dark" | "light";
 
-function Wordmark() {
+function Brand() {
   return (
-    <Link to="/" className="group flex items-center gap-3" aria-label="Shot by Srijan — home">
-      <span className="flex h-10 w-10 items-center justify-center border border-white font-serif text-xl italic text-white transition-colors group-hover:border-accent group-hover:text-accent">
-        S
+    <div className="brand" aria-label="Shot by Srijan">
+      <span className="brand-mark">S</span>
+      <span className="brand-name">
+        <small>Shot by</small>
+        <strong>Srijan</strong>
       </span>
-      <span className="hidden leading-none sm:block">
-        <span className="block text-[9px] font-semibold uppercase tracking-[0.3em] text-muted">Shot by</span>
-        <span className="mt-1 block font-serif text-lg italic">Srijan</span>
-      </span>
-    </Link>
+    </div>
+  );
+}
+
+function ThemeToggle({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
+  return (
+    <button className="theme-toggle" onClick={onToggle} type="button" aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
+      <span className={`theme-dot theme-dot--${theme}`} aria-hidden="true" />
+      <span>{theme === "dark" ? "Light" : "Dark"}</span>
+    </button>
   );
 }
 
 export default function Layout({ children }: { children: ReactNode }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const location = useLocation();
+  const [theme, setTheme] = useState<Theme>("dark");
+  const [progress, setProgress] = useState(0);
 
-  useEffect(() => setMenuOpen(false), [location.pathname]);
+  useEffect(() => {
+    const saved = window.localStorage.getItem("shot-by-srijan-theme");
+    if (saved === "light" || saved === "dark") setTheme(saved);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem("shot-by-srijan-theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", update);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-[88px] flex-col items-center justify-between border-r border-line bg-black py-7 lg:flex">
-        <Wordmark />
-        <nav className="flex flex-col items-center gap-8">
-          {navItems.map((item) => (
-            <NavLink key={item.to} to={item.to} className="group flex flex-col items-center gap-2" aria-label={item.label}>
-              {({ isActive }) => (
-                <>
-                  <span className={`text-[9px] font-semibold tracking-[0.16em] transition-colors ${isActive ? "text-accent" : "text-muted group-hover:text-white"}`}>
-                    {item.number}
-                  </span>
-                  <span className={`vertical-label text-[9px] uppercase tracking-[0.22em] transition-colors ${isActive ? "text-accent" : "text-muted group-hover:text-white"}`}>
-                    {item.label}
-                  </span>
-                  <span className={`h-1 w-1 rounded-full transition-colors ${isActive ? "bg-accent" : "bg-transparent group-hover:bg-white"}`} />
-                </>
-              )}
-            </NavLink>
-          ))}
-        </nav>
-        <span className="vertical-label text-[8px] uppercase tracking-[0.3em] text-muted">India · 2023</span>
-      </aside>
-
-      <header className="sticky top-0 z-40 flex h-[76px] items-center justify-between border-b border-line bg-black px-5 lg:hidden">
-        <Wordmark />
-        <button onClick={() => setMenuOpen((value) => !value)} className="flex h-10 w-10 flex-col items-end justify-center gap-2" aria-label="Toggle menu">
-          <span className={`h-px bg-white transition-all ${menuOpen ? "w-6 -translate-y-[-5px] -rotate-45" : "w-6"}`} />
-          <span className={`h-px bg-white transition-all ${menuOpen ? "w-6 translate-y-[-5px] rotate-45" : "w-4"}`} />
-        </button>
-        {menuOpen && (
-          <nav className="absolute inset-x-0 top-[76px] border-b border-line bg-black px-5 py-7">
-            <div className="grid grid-cols-2 gap-5">
-              {navItems.map((item) => (
-                <NavLink key={item.to} to={item.to} className="flex items-baseline gap-3 font-serif text-2xl italic">
-                  <span className="font-sans text-[10px] not-italic text-accent">{item.number}</span>{item.label}
-                </NavLink>
-              ))}
-            </div>
-          </nav>
-        )}
-      </header>
-
-      <main className="lg:ml-[88px]">{children}</main>
-
-      <footer className="border-t border-line lg:ml-[88px]">
-        <div className="mx-auto grid max-w-[1440px] gap-8 px-5 py-12 md:grid-cols-3 md:px-10">
-          <div><Wordmark /></div>
-          <p className="max-w-xs text-xs leading-relaxed text-muted">A growing archive of small observations, photographed by Srijan.</p>
-          <div className="flex items-start justify-start gap-6 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted md:justify-end">
-            <Link to="/gallery" className="transition-colors hover:text-white">Works</Link>
-            <Link to="/contact" className="transition-colors hover:text-accent">Write</Link>
+    <div className="site-shell">
+      <header className="site-header">
+        <div className="site-header__inner">
+          <Brand />
+          <div className="header-meta">
+            <span className="header-meta__count">16 frames · 01 reel</span>
+            <ThemeToggle theme={theme} onToggle={() => setTheme(theme === "dark" ? "light" : "dark")} />
           </div>
         </div>
+      </header>
+
+      <div className="scroll-meter" aria-hidden="true">
+        <span className="scroll-meter__track" />
+        <span className="scroll-meter__fill" style={{ height: `${progress}%` }} />
+      </div>
+
+      <main>{children}</main>
+
+      <footer className="site-footer">
+        <Brand />
+        <span className="site-footer__note">A visual archive · India</span>
+        <span className="site-footer__year">© {new Date().getFullYear()}</span>
       </footer>
     </div>
   );

@@ -1,64 +1,63 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { photos } from "../data/photos";
+import Lightbox from "../components/Lightbox";
+import Reveal from "../components/Reveal";
 
 const hero = photos[0];
-const sideImage = photos[4];
-const featureA = photos[1];
-const featureB = photos[8];
+const opener = photos[1];
+const stillLife = photos[4];
+const portrait = photos[8];
+const closeUp = photos[11];
+const finalFrame = photos[15];
+
+type Photo = (typeof photos)[number];
+
+function Frame({ photo, index, className = "", onOpen }: { photo: Photo; index: number; className?: string; onOpen: () => void }) {
+  return (
+    <figure className={`art-frame ${className}`}>
+      <button type="button" className="art-frame__button" onClick={onOpen} aria-label={`Open ${photo.title} fullscreen`}>
+        <img src={photo.src} alt={photo.title} loading={index < 3 ? "eager" : "lazy"} />
+        <span className="art-frame__cursor" aria-hidden="true">↗</span>
+      </button>
+      <figcaption><span>{String(index + 1).padStart(2, "0")}</span><span>{photo.title}</span></figcaption>
+    </figure>
+  );
+}
 
 export default function Home() {
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const [introVisible, setIntroVisible] = useState(true);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setIntroVisible(false), 1600);
+    return () => window.clearTimeout(timeout);
+  }, []);
+
   return (
-    <div className="mx-auto max-w-[1440px]">
-      <section className="grid min-h-[calc(100vh-0px)] grid-cols-1 border-b border-line lg:grid-cols-[1.07fr_0.93fr]">
-        <div className="relative order-2 flex flex-col justify-between px-5 pb-12 pt-12 md:px-10 md:pb-14 md:pt-16 lg:order-1 lg:px-16 lg:pt-24">
-          <div>
-            <p className="rise text-[10px] font-semibold uppercase tracking-[0.32em] text-muted" style={{ animationDelay: "0.05s" }}>A visual archive · 01—16</p>
-            <h1 className="rise mt-10 max-w-3xl font-serif text-[clamp(4.5rem,11vw,10.5rem)] font-light leading-[0.78] tracking-[-0.06em]" style={{ animationDelay: "0.18s" }}>
-              Shot<br /><span className="ml-[15%] italic text-accent">by</span><br /><span className="ml-[30%]">Srijan</span>
-            </h1>
-            <p className="rise mt-14 max-w-xs border-l border-accent pl-4 text-sm leading-relaxed text-muted md:ml-[30%]" style={{ animationDelay: "0.3s" }}>
-              A collection of small observations. Light, whiskers, passing windows — the things worth stopping for.
-            </p>
-          </div>
-          <div className="mt-14 flex items-end justify-between gap-6 md:ml-[30%]">
-            <Link to="/gallery" className="group inline-flex items-center gap-4 text-[10px] font-semibold uppercase tracking-[0.25em]">
-              <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white transition-colors group-hover:border-accent group-hover:bg-accent group-hover:text-black">↗</span>
-              Explore the work
-            </Link>
-            <span className="text-right text-[9px] uppercase leading-relaxed tracking-[0.2em] text-muted">India<br />2022—2023</span>
-          </div>
-        </div>
-        <div className="relative order-1 min-h-[58vh] overflow-hidden lg:order-2 lg:min-h-0">
-          <img src={hero.src} alt={hero.title} className="kenburns absolute inset-0 h-full w-full object-cover grayscale-[15%]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/15" />
-          <div className="absolute bottom-6 left-5 right-5 flex items-end justify-between text-[9px] font-semibold uppercase tracking-[0.22em] md:bottom-10 md:left-10 md:right-10">
-            <span className="text-white">01 / 16</span><span className="text-white/60">A quiet stare</span>
-          </div>
-          <span className="absolute right-5 top-6 font-serif text-6xl font-light italic text-white/80 md:right-10 md:top-10 md:text-8xl">S</span>
-        </div>
+    <div className="archive">
+      {introVisible && <div className="intro-curtain" aria-hidden="true"><span>Shot by Srijan</span><em>visual archive</em></div>}
+
+      <section className="hero-panel">
+        <div className="hero-panel__copy"><p className="eyebrow">A collection of still moments</p><h1>Shot<br /><i>by</i> <strong>Srijan</strong></h1><p className="hero-panel__sub">Look closer.</p></div>
+        <button type="button" className="hero-panel__image" onClick={() => setViewerIndex(0)} aria-label="Open featured frame fullscreen"><img src={hero.src} alt={hero.title} /><span className="hero-panel__index">01 <i>/</i> 16</span><span className="hero-panel__open">View frame <b>↗</b></span></button>
+        <div className="hero-panel__aside"><span className="vertical-copy">Made between 2022—23 · India</span><span className="hero-panel__scroll">Scroll to wander <b>↓</b></span></div>
       </section>
 
-      <section className="grid gap-12 border-b border-line px-5 py-20 md:grid-cols-[0.5fr_1fr_1.2fr] md:px-10 md:py-28 lg:px-16">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted">Selected<br />observations</div>
-        <h2 className="font-serif text-4xl font-light leading-[0.95] md:text-6xl">The ordinary<br /><span className="italic text-accent">deserves</span><br />attention.</h2>
-        <div className="flex flex-col justify-between gap-10 md:pt-2"><p className="max-w-sm text-sm leading-7 text-muted">Not every photograph needs a destination. Some just need a little patience — a cat looking back, a flower holding the last sun, a train becoming a blur.</p><Link to="/about" className="text-[10px] font-semibold uppercase tracking-[0.25em] underline decoration-accent underline-offset-8 transition-colors hover:text-accent">Read the notes →</Link></div>
-      </section>
+      <section className="statement-panel"><Reveal><span className="section-number">01</span></Reveal><Reveal delay={80}><p>Somewhere between<br /><i>the ordinary</i><br />and the unforgettable.</p></Reveal><Reveal delay={160}><span className="statement-panel__mark">✳</span></Reveal></section>
 
-      <section className="grid border-b border-line md:grid-cols-2">
-        <Link to="/gallery" className="group relative min-h-[520px] overflow-hidden border-b border-line md:border-b-0 md:border-r">
-          <img src={sideImage.src} alt={sideImage.title} className="absolute inset-0 h-full w-full object-cover grayscale-[25%] transition-transform duration-700 group-hover:scale-105" />
-          <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/0" />
-          <div className="absolute left-5 top-5 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.2em] md:left-10 md:top-10"><span className="h-2 w-2 rounded-full bg-accent" />02 / botanicals</div>
-          <div className="absolute bottom-6 left-5 right-5 flex items-end justify-between md:bottom-10 md:left-10 md:right-10"><h3 className="font-serif text-4xl italic md:text-5xl">Last light</h3><span className="text-2xl transition-transform group-hover:translate-x-2">→</span></div>
-        </Link>
-        <div className="grid grid-rows-2">
-          {[featureA, featureB].map((photo, index) => <Link to="/gallery" key={photo.id} className="group relative grid grid-cols-[1fr_1.1fr] overflow-hidden border-b border-line last:border-b-0"><div className="relative min-h-[250px] overflow-hidden"><img src={photo.src} alt={photo.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" /></div><div className="flex flex-col justify-between p-5 md:p-8"><span className="text-[9px] font-semibold uppercase tracking-[0.22em] text-muted">0{index + 3} / {photo.category}</span><h3 className="font-serif text-2xl italic md:text-3xl">{photo.title}</h3><span className="text-[10px] uppercase tracking-[0.2em] text-muted">View frame ↗</span></div></Link>)}
-        </div>
-      </section>
+      <section className="diptych-panel"><Reveal className="diptych-panel__intro"><span className="eyebrow">The first roll</span><h2>Light<br /><i>finds</i><br />a way in.</h2><span className="small-note">02—03 / night studies</span></Reveal><Reveal delay={120} className="diptych-panel__large"><Frame photo={opener} index={1} onOpen={() => setViewerIndex(1)} /></Reveal><Reveal delay={220} className="diptych-panel__small"><Frame photo={stillLife} index={4} onOpen={() => setViewerIndex(4)} /></Reveal></section>
 
-      <section className="overflow-hidden border-b border-line py-8"><div className="marquee-track flex w-max whitespace-nowrap"><span className="mx-8 font-serif text-4xl font-light italic md:text-6xl">stay curious · look closer · keep walking · </span><span className="mx-8 font-serif text-4xl font-light italic md:text-6xl">stay curious · look closer · keep walking · </span></div></section>
+      <section className="interlude-panel"><Reveal><span className="interlude-panel__number">02</span></Reveal><Reveal delay={100}><p>Not a portfolio.<br /><i>A place to pause.</i></p></Reveal></section>
 
-      <section className="grid gap-8 px-5 py-20 md:grid-cols-[1fr_2fr] md:px-10 md:py-28 lg:px-16"><span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted">Next frame</span><div><h2 className="max-w-3xl font-serif text-5xl font-light leading-[0.9] md:text-8xl">See the full<br /><span className="italic text-accent">contact sheet.</span></h2><Link to="/gallery" className="mt-10 inline-block border-b border-white pb-3 text-[10px] font-semibold uppercase tracking-[0.25em] transition-colors hover:border-accent hover:text-accent">Enter gallery →</Link></div></section>
+      <section className="portrait-panel"><Reveal className="portrait-panel__image"><Frame photo={portrait} index={8} onOpen={() => setViewerIndex(8)} /></Reveal><Reveal delay={140} className="portrait-panel__copy"><span className="eyebrow">A note on looking</span><h2>The things<br />that <i>stay.</i></h2><p>Faces in the leaves. A body at rest. The kind of quiet that only appears when nothing is being asked of it.</p><span className="portrait-panel__line" /></Reveal></section>
+
+      <section className="contact-sheet-panel"><div className="contact-sheet-panel__heading"><Reveal><span className="eyebrow">The archive</span><h2>Sixteen<br /><i>ways</i> to see.</h2></Reveal><Reveal delay={120}><p>Keep moving slowly.<br />There is more below.</p></Reveal></div><div className="contact-sheet"><Reveal><Frame photo={photos[2]} index={2} onOpen={() => setViewerIndex(2)} /></Reveal><Reveal delay={60}><Frame photo={photos[3]} index={3} onOpen={() => setViewerIndex(3)} /></Reveal><Reveal delay={120}><Frame photo={photos[5]} index={5} onOpen={() => setViewerIndex(5)} /></Reveal><Reveal delay={180}><Frame photo={photos[6]} index={6} onOpen={() => setViewerIndex(6)} /></Reveal><Reveal delay={240}><Frame photo={photos[7]} index={7} onOpen={() => setViewerIndex(7)} /></Reveal><Reveal delay={300}><Frame photo={closeUp} index={11} onOpen={() => setViewerIndex(11)} /></Reveal></div></section>
+
+      <section className="reel-panel"><div className="reel-panel__title"><span className="eyebrow">Moving image · coming soon</span><h2>There will be<br /><i>motion</i> here.</h2></div><div className="reel-panel__window"><div className="reel-panel__play">＋</div><span>01:16</span></div><p className="reel-panel__note">A space reserved for moving pictures, when they are ready.</p></section>
+
+      <section className="outro-panel"><Reveal><span className="outro-panel__label">End of the roll</span></Reveal><Reveal delay={100}><Frame photo={finalFrame} index={15} className="outro-panel__image" onOpen={() => setViewerIndex(15)} /></Reveal><Reveal delay={180} className="outro-panel__copy"><p>Thanks<br /><i>for looking.</i></p><span>Shot by Srijan · 2023</span></Reveal></section>
+
+      {viewerIndex !== null && <Lightbox photos={photos} index={viewerIndex} onClose={() => setViewerIndex(null)} onNavigate={setViewerIndex} />}
     </div>
   );
 }

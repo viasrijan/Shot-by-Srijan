@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Photo, formatCamera } from "../data/photos";
 
 interface LightboxProps {
@@ -10,6 +10,7 @@ interface LightboxProps {
 
 export default function Lightbox({ photos, index, onClose, onNavigate }: LightboxProps) {
   const photo = photos[index];
+  const touchStart = useRef<number | null>(null);
   const prev = useCallback(() => onNavigate((index - 1 + photos.length) % photos.length), [index, photos.length, onNavigate]);
   const next = useCallback(() => onNavigate((index + 1) % photos.length), [index, photos.length, onNavigate]);
 
@@ -30,19 +31,39 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Lightbo
   if (!photo) return null;
 
   return (
-    <div className="lb-in fixed inset-0 z-[70] flex flex-col bg-black" role="dialog" aria-modal="true">
-      <div className="flex items-center justify-between border-b border-line px-5 py-4 md:px-8">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted">{photo.frame} / {String(photos.length).padStart(2, "0")}</span>
-        <button onClick={onClose} className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted transition-colors hover:text-accent">Close ×</button>
+    <div
+      className="viewer"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Viewing ${photo.title}`}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      onTouchStart={(event) => { touchStart.current = event.touches[0]?.clientX ?? null; }}
+      onTouchEnd={(event) => {
+        if (touchStart.current === null) return;
+        const distance = (event.changedTouches[0]?.clientX ?? 0) - touchStart.current;
+        if (Math.abs(distance) > 50) (distance > 0 ? prev : next)();
+        touchStart.current = null;
+      }}
+    >
+      <div className="viewer__topline">
+        <span>{photo.frame} <i>/</i> {String(photos.length).padStart(2, "0")}</span>
+        <button type="button" onClick={onClose} className="viewer__close">Close <b>×</b></button>
       </div>
-      <div className="relative flex min-h-0 flex-1 items-center justify-center p-5 md:p-12">
-        <button onClick={prev} className="absolute left-3 z-10 flex h-12 w-12 items-center justify-center border border-line font-serif text-2xl text-muted transition-colors hover:border-white hover:text-white md:left-8" aria-label="Previous photo">←</button>
-        <img key={photo.src} src={photo.src} alt={photo.title} className="lb-in max-h-full max-w-full object-contain" />
-        <button onClick={next} className="absolute right-3 z-10 flex h-12 w-12 items-center justify-center border border-line font-serif text-2xl text-muted transition-colors hover:border-white hover:text-white md:right-8" aria-label="Next photo">→</button>
+
+      <div className="viewer__stage">
+        <button type="button" onClick={prev} className="viewer__arrow viewer__arrow--prev" aria-label="Previous frame">←</button>
+        <img key={photo.src} src={photo.src} alt={photo.title} className="viewer__image" />
+        <button type="button" onClick={next} className="viewer__arrow viewer__arrow--next" aria-label="Next frame">→</button>
       </div>
-      <div className="flex flex-col justify-between gap-2 border-t border-line px-5 py-4 md:flex-row md:items-center md:px-8">
-        <h3 className="font-serif text-xl italic">{photo.title}</h3>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">{photo.category} · {formatCamera(photo.camera)} · {photo.date}</p>
+
+      <div className="viewer__bottomline">
+        <div>
+          <h2>{photo.title}</h2>
+          <p>{formatCamera(photo.camera)} · {photo.date}</p>
+        </div>
+        <span className="viewer__hint">← → / swipe</span>
       </div>
     </div>
   );
