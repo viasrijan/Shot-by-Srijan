@@ -1,8 +1,8 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 
-interface RevealProps { children: ReactNode; className?: string; delay?: number; }
+interface RevealProps { children: ReactNode; className?: string; delay?: number; style?: CSSProperties; }
 
-export default function Reveal({ children, className = "", delay = 0 }: RevealProps) {
+export default function Reveal({ children, className = "", delay = 0, style }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const element = ref.current;
@@ -13,5 +13,9 @@ export default function Reveal({ children, className = "", delay = 0 }: RevealPr
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
-  return <div ref={ref} className={`reveal ${className}`} style={{ "--delay": `${delay}ms` } as React.CSSProperties}>{children}</div>;
+  return (
+    <div ref={ref} className={`reveal ${className}`} style={{ ...style, "--delay": `${delay}ms` } as CSSProperties}>
+      {children}
+    </div>
+  );
 }

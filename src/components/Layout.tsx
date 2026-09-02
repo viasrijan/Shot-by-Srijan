@@ -41,9 +41,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           aria-label="Shot by Srijan"
         >
           <Mark />
-          <span className="brand__wordmark">Shot by Srijan</span>
         </button>
-        <span className="site-header__edition">Photography archive · 2026</span>
       </header>
       <button
         type="button"
@@ -62,9 +60,11 @@ export default function Layout({ children }: { children: ReactNode }) {
       </button>
       <main>{children}</main>
       <footer className="site-footer">
+        <svg className="site-footer__sig" viewBox="0 0 200 16" aria-hidden="true">
+          <path d="M2 9 C 40 4, 100 3, 198 7" pathLength={1} />
+        </svg>
         <Mark />
         <p>Shot by Srijan</p>
-        <span>All frames, all moments.</span>
       </footer>
     </div>
   );
