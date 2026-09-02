@@ -74,9 +74,9 @@ main { position: relative; z-index: 1; }
 
 /* Hero: one centred column — print, then signature */
 .hero { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100svh; padding: 110px 24px 90px; text-align: center; }
-.hero__stage { display: flex; flex-direction: column; align-items: center; gap: clamp(36px, 6vh, 64px); width: 100%; }
+.hero__stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(18px, 3vh, 32px); width: 100%; }
 .hero .reveal { opacity: 1; transform: none; }
-.hero__print { position: relative; width: min(100%, 520px); animation: settle 1.6s cubic-bezier(.22,1,.36,1) both; }
+.hero__print { position: relative; width: min(100%, 390px); animation: settle 1.6s cubic-bezier(.22,1,.36,1) both; }
 .hero__print .pin { --tilt: -1.4deg; --float-dur: 13s; }
 .hero__print .pin__mat { box-shadow: 0 50px 90px -30px rgba(0,0,0,.75); }
 .hero__print .pin__caption { display: none; }
