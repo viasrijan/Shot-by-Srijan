@@ -18,6 +18,10 @@ function Mark() {
   );
 }
 
+export function MarkIcon() {
+  return <Mark />;
+}
+
 export default function Layout({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("dark");
 
@@ -33,16 +37,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className="site-shell">
-      <header className="site-header">
-        <button
-          type="button"
-          className="brand"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Shot by Srijan"
-        >
-          <Mark />
-          <span className="brand__wordmark">Shot by Srijan</span>
-        </button>
+      <header className="site-header site-header--minimal">
         <span className="site-header__edition">Photography archive · 2026</span>
       </header>
       <button
@@ -64,7 +59,6 @@ export default function Layout({ children }: { children: ReactNode }) {
       <footer className="site-footer">
         <Mark />
         <p>Shot by Srijan</p>
-        <span>All frames, all moments.</span>
       </footer>
     </div>
   );

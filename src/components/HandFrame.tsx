@@ -16,12 +16,51 @@ const FRAMES: string[][] = [
   ],
 ];
 
-export default function HandFrame({ variant = 0 }: { variant?: number }) {
+export type FrameRatio = "wide" | "standard" | "portrait" | "square";
+
+const RATIO_BOX: Record<FrameRatio, { w: number; h: number }> = {
+  wide: { w: 160, h: 90 },
+  standard: { w: 150, h: 100 },
+  portrait: { w: 70, h: 105 },
+  square: { w: 100, h: 100 },
+};
+
+function ratioForOrientation(orientation?: string, fallback: FrameRatio = "standard"): FrameRatio {
+  if (orientation === "portrait") return "portrait";
+  return fallback;
+}
+
+export default function HandFrame({
+  variant = 0,
+  ratio,
+  orientation,
+}: {
+  variant?: number;
+  ratio?: FrameRatio;
+  orientation?: "landscape" | "portrait";
+}) {
+  // Resolve ratio: explicit prop wins, otherwise derive from orientation.
+  // The svg viewBox always matches the container ratio, and the base
+  // 100x100 artwork is scaled uniformly into it — so the frame is
+  // slightly larger than the image but never a different proportion.
+  const resolved: FrameRatio = ratio ?? ratioForOrientation(orientation, "standard");
+  const box = RATIO_BOX[resolved];
+  const sx = box.w / 100;
+  const sy = box.h / 100;
+  const paths = FRAMES[variant % FRAMES.length];
+
   return (
-    <svg className="hand-frame" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      {FRAMES[variant % FRAMES.length].map((d) => (
-        <path key={d} d={d} />
-      ))}
+    <svg
+      className={`hand-frame hand-frame--${resolved}`}
+      viewBox={`0 0 ${box.w} ${box.h}`}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <g transform={`scale(${sx} ${sy})`}>
+        {paths.map((d) => (
+          <path key={d} d={d} />
+        ))}
+      </g>
     </svg>
   );
 }
