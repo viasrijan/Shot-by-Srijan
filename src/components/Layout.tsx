@@ -20,6 +20,18 @@ export function MarkIcon() {
   return <Mark />;
 }
 
+function FloatingOrbs() {
+  return (
+    <div className="orbs-global" aria-hidden="true">
+      <span className="orb-global orb-global--1" />
+      <span className="orb-global orb-global--2" />
+      <span className="orb-global orb-global--3" />
+      <span className="orb-global orb-global--4" />
+      <span className="orb-global orb-global--5" />
+    </div>
+  );
+}
+
 export default function Layout({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.documentElement.dataset.theme = "dark";
@@ -27,15 +39,13 @@ export default function Layout({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div className="site-shell">
-      <header className="site-header site-header--minimal">
-        <span className="site-header__edition">Photography archive · 2026</span>
-      </header>
+    <div className="site-shell" id="top">
       <main>{children}</main>
       <footer className="site-footer">
         <Mark />
         <p>Shot by Srijan</p>
       </footer>
+      <FloatingOrbs />
     </div>
   );
 }

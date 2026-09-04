@@ -58,7 +58,7 @@ export default function HandFrame({
 
   return (
     <svg
-      className={`hand-frame hand-frame--${resolved}`}
+      className={`hand-frame hand-frame--${resolved} hand-frame--v${variant % FRAMES.length}`}
       viewBox={`0 0 ${box.w} ${box.h}`}
       preserveAspectRatio="none"
       aria-hidden="true"

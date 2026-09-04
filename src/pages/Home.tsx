@@ -10,7 +10,9 @@ import { playShutter } from "../components/sfx";
 
 const heroPhoto = photos[0];
 
-const reel = photos.slice(1);
+// Reel order interleaves dark/bright tones so similar colours never sit together.
+const REEL_ORDER = [1, 4, 9, 13, 3, 7, 14, 5, 11, 2, 8, 15, 6, 12, 10];
+const reel = REEL_ORDER.map((i) => photos[i]);
 
 const CAPTIONS: Record<string, string> = {
   "dsc00098-2": "held that stare a second too long",
@@ -86,8 +88,8 @@ function Shot({ photo, variant, framed, onOpen }: { photo: Photo; variant: numbe
 function YoutubeIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="2" y="5" width="20" height="14" rx="4" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M10.5 9.5 L15.5 12 L10.5 14.5 Z" fill="currentColor" />
+      <rect x="2" y="5" width="20" height="14" rx="4" fill="#FF0000" />
+      <path d="M10.5 9.5 L15.5 12 L10.5 14.5 Z" fill="#ffffff" />
     </svg>
   );
 }
@@ -95,9 +97,16 @@ function YoutubeIcon() {
 function InstagramIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" />
+      <defs>
+        <linearGradient id="ig-grad" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stopColor="#feda75" />
+          <stop offset=".5" stopColor="#d62976" />
+          <stop offset="1" stopColor="#962fbf" />
+        </linearGradient>
+      </defs>
+      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="url(#ig-grad)" strokeWidth="1.8" />
+      <circle cx="12" cy="12" r="4" fill="none" stroke="url(#ig-grad)" strokeWidth="1.8" />
+      <circle cx="17.2" cy="6.8" r="1.3" fill="#d62976" />
     </svg>
   );
 }
@@ -120,24 +129,30 @@ export default function Home() {
         <Orbs variant="hero" />
         <Reveal direction="down">
           <div className="hero__split">
-            <div className="hero__brand">
+            <a
+              className="hero__brand"
+              href="#top"
+              onClick={(e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              aria-label="Shot by Srijan — back to homepage"
+            >
               <span className="hero__mark" aria-hidden="true">
                 <Mark />
               </span>
-              <h1 className="hero__title" aria-label="Shot by Srijan">
-                <svg className="hero__title-svg" viewBox="0 0 300 118" role="img" aria-label="Shot by Srijan">
-                  <text x="0" y="50" textLength="300" lengthAdjust="spacingAndGlyphs">Shot by</text>
-                  <text x="0" y="108" textLength="300" lengthAdjust="spacingAndGlyphs">Srijan</text>
-                </svg>
+              <h1 className="hero__title">
+                <span>Shot by</span>
+                <span>Srijan</span>
               </h1>
-            </div>
+            </a>
             <div className="hero__bottom hero__bottom--center">
               <p>A journal of frames that I&apos;ve captured</p>
               <div className="hero__socials">
                 <a href="https://youtube.com/@ShotbySrijan" target="_blank" rel="noopener noreferrer" aria-label="YouTube — Shot by Srijan">
                   <YoutubeIcon />
                 </a>
-                <a href="https://instagram.com/Sijan.cc" target="_blank" rel="noopener noreferrer" aria-label="Instagram — Sijan.cc">
+                <a href="https://instagram.com/Srijan.cc" target="_blank" rel="noopener noreferrer" aria-label="Instagram — Srijan.cc">
                   <InstagramIcon />
                 </a>
               </div>
