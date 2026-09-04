@@ -68,14 +68,16 @@ function Shot({ photo, variant, framed, onOpen }: { photo: Photo; variant: numbe
   return (
     <figure className={`shot${photo.orientation === "portrait" ? " shot--portrait" : ""}`}>
       <button type="button" className="shot__button" onClick={onOpen} aria-label={`Open ${photo.title} larger`}>
-        <img src={photo.thumb} alt={photo.title} loading="lazy" />
-        {framed && (
-          <HandFrame
-            variant={variant}
-            orientation={photo.orientation}
-            ratio={photo.orientation === "portrait" ? "portrait" : "standard"}
-          />
-        )}
+        <span className="shot__imgwrap">
+          <img src={photo.thumb} alt={photo.title} loading="lazy" />
+          {framed && (
+            <HandFrame
+              variant={variant}
+              orientation={photo.orientation}
+              ratio={photo.orientation === "portrait" ? "portrait" : "standard"}
+            />
+          )}
+        </span>
       </button>
       <Doodle className={`shot__doodle shot__doodle--${variant % 2 === 0 ? "right" : "left"}`} />
       <figcaption className="shot__caption">
@@ -127,23 +129,22 @@ export default function Home() {
     <div className="archive">
       <section className="hero hero--split">
         <Orbs variant="hero" />
-        <a
-          className="hero__toplogo"
-          href="#top"
-          onClick={(e) => {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
-          aria-label="Shot by Srijan — back to homepage"
-        >
-          <Mark />
-        </a>
         <Reveal direction="down">
           <div className="hero__split">
-            <h1 className="hero__title">
-              <span>Shot by</span>
-              <span>Srijan</span>
-            </h1>
+            <a
+              className="hero__brand"
+              href="#top"
+              onClick={(e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              aria-label="Shot by Srijan — back to homepage"
+            >
+              <span className="hero__mark" aria-hidden="true">
+                <Mark />
+              </span>
+              <h1 className="hero__title">Shot by Srijan</h1>
+            </a>
             <div className="hero__bottom hero__bottom--center">
               <p>A journal of frames that I&apos;ve captured</p>
               <div className="hero__socials">
