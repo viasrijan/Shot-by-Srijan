@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { photos, type Photo } from "../data/photos";
 import HandFrame from "../components/HandFrame";
 import Lightbox from "../components/Lightbox";
@@ -33,37 +33,27 @@ const CAPTIONS: Record<string, string> = {
   "dsc07039": "look up more often",
 };
 
-const gallery = [photos[2], photos[3], photos[5], photos[6], photos[8], photos[10], photos[11], photos[13], photos[14], photos[15]];
+const gallery = [photos[2], photos[3], photos[5], photos[6], photos[8], photos[10], photos[11], photos[13], photos[14]];
 
 const BAND_DOODLES = [Star, Diamond, Sparkle, Camera];
 
-// Alternate frames across each row of two: right, left, right, left…
+// Rows of 3: frame the outer columns, leave the middle clean for rhythm.
 function rowHasFrame(i: number): boolean {
-  const pair = Math.floor(i / 2);
-  return pair % 2 === 0 ? i % 2 === 1 : i % 2 === 0;
+  return i % 3 !== 1;
 }
 
-function useTypewriter(text: string, speed = 75) {
-  const [out, setOut] = useState("");
-  useEffect(() => {
-    let ch = 0;
-    let cancelled = false;
-    const timers: number[] = [];
-    const tick = () => {
-      if (cancelled) return;
-      if (ch <= text.length) {
-        setOut(text.slice(0, ch));
-        ch += 1;
-        timers.push(window.setTimeout(tick, speed));
-      }
-    };
-    timers.push(window.setTimeout(tick, 400));
-    return () => {
-      cancelled = true;
-      timers.forEach((t) => window.clearTimeout(t));
-    };
-  }, [text, speed]);
-  return out;
+function DoodleTitle({ text }: { text: string }) {
+  return (
+    <h1 className="hero__title hero__title--doodle" aria-label={text}>
+      <span aria-hidden="true">
+        {text.split("").map((ch, i) => (
+          <span key={i} className="doodle-letter" style={{ animationDelay: `${150 + i * 45}ms` }}>
+            {ch === " " ? "\u00A0" : ch}
+          </span>
+        ))}
+      </span>
+    </h1>
+  );
 }
 
 function Shot({ photo, variant, framed, onOpen }: { photo: Photo; variant: number; framed: boolean; onOpen: () => void }) {
@@ -128,8 +118,6 @@ export default function Home() {
     open(heroPhoto);
   };
 
-  const typedTitle = useTypewriter("Shot by Srijan");
-
   return (
     <div className="archive">
       <section className="hero hero--split">
@@ -146,7 +134,7 @@ export default function Home() {
         <Reveal direction="down">
           <div className="hero__split">
             <a
-              className="hero__brand"
+              className="hero__brand hero__brand--doodle"
               href="#top"
               onClick={(e) => {
                 e.preventDefault();
@@ -154,10 +142,20 @@ export default function Home() {
               }}
               aria-label="Shot by Srijan — back to homepage"
             >
-              <h1 className="hero__title hero__title--typing" aria-label="Shot by Srijan">
-                {typedTitle}
-                <span className="type-caret" aria-hidden="true" />
-              </h1>
+              <DoodleTitle text="Shot by Srijan" />
+              <svg className="hero__doodle-underline" viewBox="0 0 300 20" aria-hidden="true">
+                <path
+                  className="doodle__draw doodle__draw--title"
+                  pathLength={100}
+                  d="M 6 12 C 60 5, 140 17, 210 10 C 240 7, 270 12, 294 8"
+                />
+                <path
+                  className="doodle__draw doodle__draw--title doodle__draw--soft"
+                  pathLength={100}
+                  style={{ animationDelay: "900ms" }}
+                  d="M 12 15.5 C 80 11, 170 18.5, 288 13.5"
+                />
+              </svg>
             </a>
             <div className="hero__bottom hero__bottom--center">
               <p>A journal of frames that I&apos;ve captured</p>
@@ -180,7 +178,7 @@ export default function Home() {
         <Orbs variant="band" />
         <div className="gallery__grid">
           {gallery.map((photo, i) => (
-            <Reveal key={photo.id} delay={(i % 4) * 90} direction="none" className={`gallery__slot gallery__slot--${i % 2}`}>
+            <Reveal key={photo.id} delay={(i % 3) * 90} direction="none" className={`gallery__slot gallery__slot--${i % 3}`}>
               <Shot photo={photo} variant={i} framed={rowHasFrame(i)} onOpen={() => open(photo)} />
             </Reveal>
           ))}
