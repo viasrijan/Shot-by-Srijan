@@ -120,7 +120,7 @@ export default function Home() {
         </Reveal>
       </section>
 
-      <Filmstrip photos={reel} onOpen={open} />
+      <Filmstrip photos={reel} captions={CAPTIONS} onOpen={open} />
 
       {bands.map((band) => (
         <section key={band.id} className={`band band--${band.id}`}>
