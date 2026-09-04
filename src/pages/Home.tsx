@@ -1,11 +1,12 @@
 import { useState } from "react";
+import type { CSSProperties } from "react";
 import { photos, type Photo } from "../data/photos";
 import HandFrame from "../components/HandFrame";
 import Lightbox from "../components/Lightbox";
 import Reveal from "../components/Reveal";
 import Filmstrip from "../components/Filmstrip";
 import Orbs from "../components/Orbs";
-import { Camera, Diamond, Sparkle, Star } from "../components/Doodles";
+import { Camera, Flower, Sparkle, Star } from "../components/Doodles";
 import { playShutter } from "../components/sfx";
 
 const heroPhoto = photos[0];
@@ -22,59 +23,79 @@ const CAPTIONS: Record<string, string> = {
   "dsc01073": "golden hour, no filter needed",
   "dsc01088": "small things, big mood",
   "dsc01204-1": "primary colours, accidental art",
-  "dsc01368": "peeking through the green",
-  "dsc01370": "a quiet place to land",
+  "dsc01368": "a quiet place to lay down",
+  "dsc01370": "peeking through the green",
   "dsc01429-2": "main-character energy",
   "dsc02400": "sunday best",
-  "dsc02987": "chasing window light",
+  "dsc02987": "morning patrol",
   "dsc03153": "tiny supervisor on duty",
   "dsc06985": "first steps, big world",
   "dsc07030": "lost in the leaves",
   "dsc07039": "look up more often",
 };
 
-const gallery = [photos[2], photos[3], photos[5], photos[6], photos[8], photos[10], photos[11], photos[13], photos[14]];
+// Magazine spreads — two stacked horizontal frames beside one tall vertical.
+const editorial: Photo[] = [photos[2], photos[3], photos[10]];
+const mirrored: Photo[] = [photos[13], photos[14], photos[11]];
+const squares: Photo[] = [photos[4], photos[5], photos[6], photos[8]];
+const portrait = photos[12];
+const triptych: Photo[] = [photos[7], photos[9], photos[15]];
 
-const BAND_DOODLES = [Star, Diamond, Sparkle, Camera];
+const BAND_DOODLES = [Star, Flower, Sparkle, Camera];
 
-// Rows of 3: frame the outer columns, leave the middle clean for rhythm.
-function rowHasFrame(i: number): boolean {
-  return i % 3 !== 1;
+// Playful doodle tilts — every shot leans its own way.
+const DOODLE_TILTS = ["-14deg", "10deg", "-6deg", "16deg", "-18deg", "8deg", "-10deg", "14deg", "-4deg", "12deg"];
+
+function doodleTilt(i: number): CSSProperties {
+  return { ["--doodle-tilt" as string]: DOODLE_TILTS[i % DOODLE_TILTS.length] };
 }
 
-function DoodleTitle({ text }: { text: string }) {
+function captionFor(photo: Photo): string {
+  return CAPTIONS[photo.id] ?? photo.category;
+}
+
+function BrushTitle({ text }: { text: string }) {
   return (
-    <h1 className="hero__title hero__title--doodle" aria-label={text}>
-      <span aria-hidden="true">
-        {text.split("").map((ch, i) => (
-          <span key={i} className="doodle-letter" style={{ animationDelay: `${150 + i * 45}ms` }}>
-            {ch === " " ? "\u00A0" : ch}
-          </span>
-        ))}
-      </span>
+    <h1 className="hero__title" aria-label={text}>
+      {text.split("").map((ch, i) => (
+        <span
+          key={i}
+          className="brush-letter"
+          style={{ animationDelay: `${200 + i * 55}ms` }}
+          aria-hidden="true"
+        >
+          {ch === " " ? "\u00A0" : ch}
+        </span>
+      ))}
     </h1>
   );
 }
 
-function Shot({ photo, variant, framed, onOpen }: { photo: Photo; variant: number; framed: boolean; onOpen: () => void }) {
-  const Doodle = BAND_DOODLES[variant % BAND_DOODLES.length];
+function Shot({
+  photo,
+  index,
+  ratio,
+  onOpen,
+  className = "",
+}: {
+  photo: Photo;
+  index: number;
+  ratio: "standard" | "portrait" | "square";
+  onOpen: () => void;
+  className?: string;
+}) {
+  const Doodle = BAND_DOODLES[index % BAND_DOODLES.length];
   return (
-    <figure className={`shot${photo.orientation === "portrait" ? " shot--portrait" : ""}`}>
+    <figure className={`shot ${photo.orientation === "portrait" ? "shot--portrait" : ""} ${className}`}>
       <button type="button" className="shot__button" onClick={onOpen} aria-label={`Open ${photo.title} larger`}>
-        <span className="shot__imgwrap">
+        <span className={`shot__imgwrap shot__imgwrap--${ratio}`}>
           <img src={photo.thumb} alt={photo.title} loading="lazy" />
-          {framed && (
-            <HandFrame
-              variant={variant}
-              orientation={photo.orientation}
-              ratio={photo.orientation === "portrait" ? "portrait" : "standard"}
-            />
-          )}
+          <HandFrame variant={index % 3} orientation={photo.orientation} ratio={ratio} />
         </span>
       </button>
-      <Doodle className="shot__doodle shot__doodle--right" />
+      <Doodle className="shot__doodle shot__doodle--right" style={doodleTilt(index)} />
       <figcaption className="shot__caption">
-        <span>{CAPTIONS[photo.id] ?? photo.category}</span>
+        <span>{captionFor(photo)}</span>
       </figcaption>
     </figure>
   );
@@ -123,7 +144,12 @@ export default function Home() {
       <section className="hero hero--split">
         <Orbs variant="hero" />
         <Reveal delay={120} direction="up">
-          <button type="button" className={`hero__media${flash ? " hero__media--flash" : ""}`} onClick={clickHero} aria-label={`Open ${heroPhoto.title} larger`}>
+          <button
+            type="button"
+            className={`hero__media${flash ? " hero__media--flash" : ""}`}
+            onClick={clickHero}
+            aria-label={`Open ${heroPhoto.title} larger`}
+          >
             <span className="tape-real tape-real--tl" aria-hidden="true" />
             <span className="hero__imgwrap hero__imgwrap--tilted">
               <img src={heroPhoto.thumb} alt={heroPhoto.title} loading="eager" draggable={false} />
@@ -134,7 +160,7 @@ export default function Home() {
         <Reveal direction="down">
           <div className="hero__split">
             <a
-              className="hero__brand hero__brand--doodle"
+              className="hero__brand"
               href="#top"
               onClick={(e) => {
                 e.preventDefault();
@@ -142,20 +168,7 @@ export default function Home() {
               }}
               aria-label="Shot by Srijan — back to homepage"
             >
-              <DoodleTitle text="Shot by Srijan" />
-              <svg className="hero__doodle-underline" viewBox="0 0 300 20" aria-hidden="true">
-                <path
-                  className="doodle__draw doodle__draw--title"
-                  pathLength={100}
-                  d="M 6 12 C 60 5, 140 17, 210 10 C 240 7, 270 12, 294 8"
-                />
-                <path
-                  className="doodle__draw doodle__draw--title doodle__draw--soft"
-                  pathLength={100}
-                  style={{ animationDelay: "900ms" }}
-                  d="M 12 15.5 C 80 11, 170 18.5, 288 13.5"
-                />
-              </svg>
+              <BrushTitle text="Shot by Srijan" />
             </a>
             <div className="hero__bottom hero__bottom--center">
               <p>A journal of frames that I&apos;ve captured</p>
@@ -174,14 +187,57 @@ export default function Home() {
 
       <Filmstrip photos={reel} onOpen={open} />
 
-      <section className="gallery" aria-label="Gallery">
+      <section className="editorial" aria-label="Selected frames">
         <Orbs variant="band" />
-        <div className="gallery__grid">
-          {gallery.map((photo, i) => (
-            <Reveal key={photo.id} delay={(i % 3) * 90} direction="none" className={`gallery__slot gallery__slot--${i % 3}`}>
-              <Shot photo={photo} variant={i} framed={rowHasFrame(i)} onOpen={() => open(photo)} />
+        <div className="editorial__inner">
+          <div className="editorial__spread">
+            <div className="editorial__col">
+              <Reveal direction="none">
+                <Shot photo={editorial[0]} index={0} ratio="standard" onOpen={() => open(editorial[0])} />
+              </Reveal>
+              <Reveal delay={110} direction="none">
+                <Shot photo={editorial[1]} index={1} ratio="standard" onOpen={() => open(editorial[1])} />
+              </Reveal>
+            </div>
+            <Reveal delay={150} direction="up" className="editorial__tall">
+              <Shot photo={editorial[2]} index={2} ratio="portrait" onOpen={() => open(editorial[2])} />
             </Reveal>
-          ))}
+          </div>
+
+          <Reveal direction="none" className="dossier">
+            <p className="dossier__eyebrow">The contact sheet</p>
+            <div className="dossier__grid">
+              {squares.map((photo, i) => (
+                <Shot key={photo.id} photo={photo} index={3 + i} ratio="square" onOpen={() => open(photo)} />
+              ))}
+            </div>
+          </Reveal>
+
+          <Reveal direction="up" className="editorial__feature">
+            <Shot photo={portrait} index={5} ratio="portrait" onOpen={() => open(portrait)} />
+          </Reveal>
+
+          <div className="editorial__spread editorial__spread--mirror">
+            <div className="editorial__col">
+              <Reveal direction="none">
+                <Shot photo={mirrored[0]} index={6} ratio="standard" onOpen={() => open(mirrored[0])} />
+              </Reveal>
+              <Reveal delay={110} direction="none">
+                <Shot photo={mirrored[1]} index={7} ratio="standard" onOpen={() => open(mirrored[1])} />
+              </Reveal>
+            </div>
+            <Reveal delay={150} direction="up" className="editorial__tall">
+              <Shot photo={mirrored[2]} index={8} ratio="portrait" onOpen={() => open(mirrored[2])} />
+            </Reveal>
+          </div>
+
+          <div className="editorial__triptych">
+            {triptych.map((photo, i) => (
+              <Reveal key={photo.id} delay={i * 110} direction="none">
+                <Shot photo={photo} index={9 + i} ratio="standard" onOpen={() => open(photo)} />
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 

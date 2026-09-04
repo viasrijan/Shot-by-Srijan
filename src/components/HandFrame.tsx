@@ -1,31 +1,31 @@
-// Wobbly hand-drawn ratio-matched frames.
-// Base artwork is drawn in a 100x100 box with loose cubic curves,
-// corner overshoots and a second sketch pass. It is scaled uniformly
-// into a viewBox that matches the container ratio, so the frame stays
-// slightly larger than the image but never a different proportion.
+// Sketchbook frames drawn with thin, straight pen lines.
+// Base artwork lives in a 100x100 box and is scaled uniformly into a
+// viewBox matching the container ratio, so every frame keeps the
+// image's proportions. Lines run slightly past the corners like a
+// quick hand-ruled sketch, with a lighter second pass on some variants.
 import type { CSSProperties } from "react";
 
 const FRAMES: string[][] = [
   [
-    // Loose single loop with wobble + overshoot corners
-    "M 4 6 C 28 2.5, 68 7.5, 96 4 C 99.5 30, 95.5 68, 98 94 C 70 97.5, 32 93.5, 5 96.5 C 1.5 70, 6 32, 4 6 Z",
-    // Inner sketch pass, slightly offset and lighter
-    "M 8 11 C 32 8, 66 12.5, 91 9.5 C 93.5 32, 90 66, 92.5 89 C 68 91.5, 34 88, 10 90.5 C 7.5 66, 11 34, 8 11 Z",
+    // Pen-ruled box — straight sides, corners overshooting
+    "M -2.5 5.5 L 102.5 3.5",
+    "M 97.5 -2 L 99.5 97",
+    "M 3 98.5 L 103 96.5",
+    "M 1.5 -2 L -0.5 99.5",
   ],
   [
-    // Shaky outer loop, heavier wobble on right edge
-    "M 2.5 4.5 C 30 6.5, 62 2, 97.5 5.5 C 95 32, 100.5 62, 96.5 95 C 66 92.5, 34 97.5, 3.5 94 C 6 66, 0.5 34, 2.5 4.5 Z",
-    // Corner ticks — hand-drawn overshoots
-    "M -2.5 1.5 C 0 3.5, 3 5.5, 6.5 8.5",
-    "M 102.5 1.5 C 100 3.5, 97.5 5.5, 93.5 8.5",
-    "M 102.5 98.5 C 100 96.5, 97.5 94.5, 93.5 91.5",
-    "M -2.5 98.5 C 0 96.5, 3 94.5, 6.5 91.5",
+    // Double-ruled top edge (quick overdraw) + straight box
+    "M -2.5 4.5 L 102.5 5.5",
+    "M 1.5 8.5 L 98.5 9.5",
+    "M 98 -2 L 96.5 99.5",
+    "M 2.5 101 L 0.5 3",
   ],
   [
-    // Loose loop with a gap at top-right (pen lifted) + underline scribble
-    "M 5 5.5 C 30 3, 60 7, 88 4.5",
-    "M 92 4.5 C 96 30, 94 64, 96.5 93.5 C 68 96, 34 92.5, 4.5 95.5 C 2 68, 6.5 34, 5 5.5 Z",
-    "M 10 91 C 34 89, 62 92.5, 90 90",
+    // Box with the pen lifting at the top-right + straight underline accent
+    "M -2.5 5 L 82 4",
+    "M 95 -2 L 98 98.5",
+    "M 3 101 L 0.5 3",
+    "M 8 95 L 92.5 96",
   ],
 ];
 
@@ -72,7 +72,7 @@ export default function HandFrame({
     >
       <g transform={`scale(${sx} ${sy})`}>
         {paths.map((d, n) => (
-          <path key={d} d={d} pathLength={100} style={{ animationDelay: `${n * 220}ms` }} />
+          <path key={d} d={d} pathLength={100} style={{ animationDelay: `${n * 140}ms` }} />
         ))}
       </g>
     </svg>
