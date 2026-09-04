@@ -72,16 +72,33 @@ function Shot({ photo, variant, framed, onOpen }: { photo: Photo; variant: numbe
             variant={variant}
             orientation={photo.orientation}
             ratio={photo.orientation === "portrait" ? "portrait" : "standard"}
-            tone={variant % 3}
           />
         )}
       </button>
       <Doodle className={`shot__doodle shot__doodle--${variant % 2 === 0 ? "right" : "left"}`} />
       <figcaption className="shot__caption">
-        <strong>{photo.title}</strong>
         <span>{CAPTIONS[photo.id] ?? photo.category}</span>
       </figcaption>
     </figure>
+  );
+}
+
+function YoutubeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="2" y="5" width="20" height="14" rx="4" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M10.5 9.5 L15.5 12 L10.5 14.5 Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function InstagramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" />
+    </svg>
   );
 }
 
@@ -108,12 +125,22 @@ export default function Home() {
                 <Mark />
               </span>
               <h1 className="hero__title" aria-label="Shot by Srijan">
-                <span>Shot by</span>
-                <span>Srijan</span>
+                <svg className="hero__title-svg" viewBox="0 0 300 118" role="img" aria-label="Shot by Srijan">
+                  <text x="0" y="50" textLength="300" lengthAdjust="spacingAndGlyphs">Shot by</text>
+                  <text x="0" y="108" textLength="300" lengthAdjust="spacingAndGlyphs">Srijan</text>
+                </svg>
               </h1>
             </div>
             <div className="hero__bottom hero__bottom--center">
               <p>A journal of frames that I&apos;ve captured</p>
+              <div className="hero__socials">
+                <a href="https://youtube.com/@ShotbySrijan" target="_blank" rel="noopener noreferrer" aria-label="YouTube — Shot by Srijan">
+                  <YoutubeIcon />
+                </a>
+                <a href="https://instagram.com/Sijan.cc" target="_blank" rel="noopener noreferrer" aria-label="Instagram — Sijan.cc">
+                  <InstagramIcon />
+                </a>
+              </div>
             </div>
           </div>
         </Reveal>
