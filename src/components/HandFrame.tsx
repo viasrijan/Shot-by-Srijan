@@ -1,18 +1,23 @@
+// Straight-line ratio-matched frames.
+// Base artwork is drawn in a 100x100 box with straight edges only
+// (no bent curves). It is scaled uniformly into a viewBox that matches
+// the container ratio, so the frame stays slightly larger than the
+// image but never a different proportion.
 const FRAMES: string[][] = [
   [
-    "M -1.5 3.2 C 24 1.8, 58 1.4, 101.5 2.8 C 99.8 28, 100.4 64, 99.2 97 C 72 98.6, 40 99.2, -1 97.4 C 0.8 70, 1.4 36, -1.5 3.2 Z",
-    "M 2.6 7 C 26 5.6, 56 5.4, 97 6.6 C 95.6 30, 96 62, 95.4 92.5 C 70 93.8, 38 94.2, 3.2 92.8 C 4.6 64, 5 36, 2.6 7 Z",
+    "M 1 2 L 99 2 L 99 98 L 1 98 Z",
+    "M 5 6 L 95 6 L 95 94 L 5 94 Z",
   ],
   [
-    "M -1.2 4 C 26 2.2, 60 1.8, 101 3 C 100.6 30, 100 62, 99.4 96.6 C 68 98, 36 98.4, -0.6 97 C 0.6 66, 1 34, -1.2 4 Z",
-    "M -3.2 -0.8 L 4.4 6.6",
-    "M 103.2 -0.8 L 95.6 6.6",
-    "M 103.2 100.8 L 95.4 93.4",
-    "M -3.2 100.8 L 4.4 93.2",
+    "M 1 2 L 99 2 L 99 98 L 1 98 Z",
+    "M -2.5 1.5 L 5 7",
+    "M 102.5 1.5 L 95 7",
+    "M 102.5 98.5 L 95 93",
+    "M -2.5 98.5 L 5 93",
   ],
   [
-    "M -0.8 3.6 C 22 2, 56 1.6, 100.8 3.2 C 99.4 30, 100 60, 98.8 96.8 C 70 98, 38 98.6, -0.4 97 C 1 68, 1.6 34, -0.8 3.6 Z",
-    "M 7 93.8 C 32 95.6, 64 95.8, 92.6 93.6",
+    "M 1 2 L 99 2 L 99 98 L 1 98 Z",
+    "M 8 92 L 92 92",
   ],
 ];
 
@@ -39,10 +44,6 @@ export default function HandFrame({
   ratio?: FrameRatio;
   orientation?: "landscape" | "portrait";
 }) {
-  // Resolve ratio: explicit prop wins, otherwise derive from orientation.
-  // The svg viewBox always matches the container ratio, and the base
-  // 100x100 artwork is scaled uniformly into it — so the frame is
-  // slightly larger than the image but never a different proportion.
   const resolved: FrameRatio = ratio ?? ratioForOrientation(orientation, "standard");
   const box = RATIO_BOX[resolved];
   const sx = box.w / 100;

@@ -1,6 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
-
-type Theme = "dark" | "light";
+import { ReactNode, useEffect } from "react";
 
 function Mark() {
   return (
@@ -23,38 +21,16 @@ export function MarkIcon() {
 }
 
 export default function Layout({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("dark");
-
   useEffect(() => {
-    const saved = window.localStorage.getItem("shot-by-srijan-theme");
-    if (saved === "light" || saved === "dark") setTheme(saved);
+    document.documentElement.dataset.theme = "dark";
+    window.localStorage.removeItem("shot-by-srijan-theme");
   }, []);
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    window.localStorage.setItem("shot-by-srijan-theme", theme);
-  }, [theme]);
 
   return (
     <div className="site-shell">
       <header className="site-header site-header--minimal">
         <span className="site-header__edition">Photography archive · 2026</span>
       </header>
-      <button
-        type="button"
-        className="theme-float"
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-      >
-        <svg className="bulb" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            className="bulb__glass"
-            d="M12 3.4 C8.6 3.4 5.9 6.1 5.9 9.4 C5.9 11.6 7 13.2 8.2 14.5 C9 15.4 9.5 16.1 9.7 17.1 C9.8 17.7 10.3 18.1 10.9 18.1 L13.1 18.1 C13.7 18.1 14.2 17.7 14.3 17.1 C14.5 16.1 15 15.4 15.8 14.5 C17 13.2 18.1 11.6 18.1 9.4 C18.1 6.1 15.4 3.4 12 3.4 Z"
-          />
-          <path className="bulb__filament" d="M10.3 11.6 L12 9.8 L13.7 11.6" />
-          <path className="bulb__base" d="M9.9 20.2 L14.1 20.2 M10.7 22.2 L13.3 22.2" />
-        </svg>
-      </button>
       <main>{children}</main>
       <footer className="site-footer">
         <Mark />

@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { photos, type Photo } from "../data/photos";
 import HandFrame from "../components/HandFrame";
 import Lightbox from "../components/Lightbox";
 import Reveal from "../components/Reveal";
 import Filmstrip from "../components/Filmstrip";
+import Orbs from "../components/Orbs";
+import { Camera, Diamond, Sparkle, Star, Tape } from "../components/Doodles";
+import { playShutter } from "../components/sfx";
 
 const heroPhoto = photos[0];
 
@@ -36,7 +39,7 @@ const bands = [
 
 function Mark() {
   return (
-    <svg viewBox="0 0 64 64" aria-hidden="true">
+    <svg viewBox="0 0 64 64" aria-hidden="true" className="mark__svg">
       <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <path d="M32 11.8 C43.6 11.1 52.7 19.6 52.4 31.6 C52.1 43.7 43.4 52.5 31.7 52.2 C20.2 51.9 11.5 43.2 11.9 31.8 C12.3 20.4 20.9 12.5 32 11.8 Z" />
         <path d="M52 32 L27.4 42" />
@@ -46,8 +49,46 @@ function Mark() {
         <path d="M22 14.7 L43 31" />
         <path d="M42 14.7 L38.3 41" />
       </g>
+      <g className="mark__shutter" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <path d="M32 22 L32 28 M42 32 L36 32 M32 42 L32 36 M22 32 L28 32" />
+      </g>
     </svg>
   );
+}
+
+function useTypewriter(lines: string[], start = true) {
+  const [out, setOut] = useState<string[]>(["", ""]);
+  useEffect(() => {
+    if (!start) return;
+    let line = 0;
+    let ch = 0;
+    let cancelled = false;
+    const timers: number[] = [];
+    const tick = () => {
+      if (cancelled) return;
+      if (line >= lines.length) return;
+      const target = lines[line];
+      if (ch <= target.length) {
+        setOut((prev) => {
+          const next = [...prev];
+          next[line] = target.slice(0, ch);
+          return next;
+        });
+        ch += 1;
+        timers.push(window.setTimeout(tick, line === 0 ? 70 : 85));
+      } else {
+        line += 1;
+        ch = 0;
+        timers.push(window.setTimeout(tick, 220));
+      }
+    };
+    timers.push(window.setTimeout(tick, 350));
+    return () => {
+      cancelled = true;
+      timers.forEach((t) => window.clearTimeout(t));
+    };
+  }, [start]);
+  return out;
 }
 
 function Shot({ photo, variant, onOpen }: { photo: Photo; variant: number; onOpen: () => void }) {
@@ -67,38 +108,60 @@ function Shot({ photo, variant, onOpen }: { photo: Photo; variant: number; onOpe
 
 export default function Home() {
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const [flash, setFlash] = useState(false);
   const open = (photo: Photo) => setViewerIndex(photos.indexOf(photo));
+  const [line1, line2] = useTypewriter(["Shot by", "Srijan"]);
+
+  const clickHero = () => {
+    playShutter(0.18);
+    setFlash(true);
+    window.setTimeout(() => setFlash(false), 280);
+    open(heroPhoto);
+  };
 
   return (
     <div className="archive">
       <section className="hero hero--split">
+        <Orbs variant="hero" />
         <Reveal>
           <div className="hero__split">
             <div className="hero__brand">
-              <span className="hero__mark" aria-hidden="true">
+              <span className="hero__mark hero__mark--shutter" aria-hidden="true">
                 <Mark />
               </span>
-              <h1 className="hero__title">
-                <span>Shot by</span>
-                <span>Srijan</span>
+              <h1 className="hero__title hero__title--type" aria-label="Shot by Srijan">
+                <span className="type-line">
+                  {line1}
+                  <span className="type-caret" aria-hidden="true" />
+                </span>
+                <span className="type-line">
+                  {line2}
+                  <span className="type-caret" aria-hidden="true" />
+                </span>
               </h1>
+              <Star className="hero__doodle hero__doodle--star" />
+              <Sparkle className="hero__doodle hero__doodle--sparkle" />
             </div>
-            <div className="hero__bottom">
+            <div className="hero__bottom hero__bottom--center">
               <p>A journal of frames that I&apos;ve captured</p>
               <span>Scroll to explore</span>
             </div>
           </div>
         </Reveal>
         <Reveal delay={120}>
-          <button type="button" className="hero__media" onClick={() => open(heroPhoto)} aria-label={`Open ${heroPhoto.title} larger`}>
-            <span className="hero__imgwrap">
+          <button type="button" className={`hero__media${flash ? " hero__media--flash" : ""}`} onClick={clickHero} aria-label={`Open ${heroPhoto.title} larger`}>
+            <Tape className="hero__tape hero__tape--tl" rotate="-8deg" />
+            <Tape className="hero__tape hero__tape--tr" rotate="7deg" />
+            <span className="hero__imgwrap hero__imgwrap--tilted">
               <img src={heroPhoto.thumb} alt={heroPhoto.title} loading="eager" draggable={false} />
               <HandFrame variant={0} orientation={heroPhoto.orientation} ratio="standard" />
+              <Diamond className="hero__doodle hero__doodle--diamond" />
             </span>
             <span className="hero__caption">
               <strong>{heroPhoto.title}</strong>
               <em>{CAPTIONS[heroPhoto.id]}</em>
             </span>
+            <Camera className="hero__doodle hero__doodle--camera" />
           </button>
         </Reveal>
       </section>
@@ -107,6 +170,7 @@ export default function Home() {
 
       {bands.map((band) => (
         <section key={band.id} className={`band band--${band.id}`}>
+          <Orbs variant="band" />
           <div className="band__bg" aria-hidden="true">
             <img src={band.bg.thumb} alt="" loading="lazy" />
             <div className="band__scrim" />
