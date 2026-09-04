@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { CSSProperties } from "react";
 import { photos, type Photo } from "../data/photos";
-import HandFrame from "../components/HandFrame";
 import Lightbox from "../components/Lightbox";
 import Reveal from "../components/Reveal";
 import Filmstrip from "../components/Filmstrip";
@@ -36,8 +35,8 @@ const CAPTIONS: Record<string, string> = {
 
 // Magazine spreads — two stacked horizontal frames beside one tall vertical.
 const editorial: Photo[] = [photos[2], photos[3], photos[10]];
-const mirrored: Photo[] = [photos[13], photos[14], photos[11]];
-const squares: Photo[] = [photos[4], photos[5], photos[6], photos[8]];
+const mirrored: Photo[] = [photos[13], photos[0], photos[11]];
+const squares: Photo[] = [photos[4], photos[5], photos[6], photos[9]];
 const portrait = photos[12];
 const triptych: Photo[] = [photos[7], photos[9], photos[15]];
 
@@ -50,21 +49,43 @@ function doodleTilt(i: number): CSSProperties {
   return { ["--doodle-tilt" as string]: DOODLE_TILTS[i % DOODLE_TILTS.length] };
 }
 
+// Polaroids lean every which way, like prints tossed on a desk.
+const POLAROID_TILTS = ["-1.7deg", "1.3deg", "-0.9deg", "1.6deg", "-1.2deg", "0.8deg", "-1.5deg", "1.1deg", "-0.7deg", "1.4deg"];
+
+function polaroidTilt(i: number): CSSProperties {
+  return { ["--polaroid-tilt" as string]: POLAROID_TILTS[i % POLAROID_TILTS.length] };
+}
+
+// Nudge crops so the subject's whole face (nose included) stays in frame.
+const CROP_FIX: Record<string, string> = {
+  "dsc02987": "42% 32%",
+};
+
+function cropStyle(photo: Photo): CSSProperties | undefined {
+  const position = CROP_FIX[photo.id];
+  return position ? ({ objectPosition: position } as CSSProperties) : undefined;
+}
+
 function captionFor(photo: Photo): string {
   return CAPTIONS[photo.id] ?? photo.category;
 }
 
 function BrushTitle({ text }: { text: string }) {
+  let letterIndex = 0;
   return (
     <h1 className="hero__title" aria-label={text}>
-      {text.split("").map((ch, i) => (
-        <span
-          key={i}
-          className="brush-letter"
-          style={{ animationDelay: `${200 + i * 55}ms` }}
-          aria-hidden="true"
-        >
-          {ch === " " ? "\u00A0" : ch}
+      {text.split(" ").map((word, w, words) => (
+        <span key={w} className="brush-word" aria-hidden="true">
+          {word.split("").map((ch, i) => (
+            <span key={i} className="brush-letter" style={{ animationDelay: `${200 + letterIndex++ * 55}ms` }}>
+              {ch}
+            </span>
+          ))}
+          {w < words.length - 1 && (
+            <span className="brush-letter" style={{ animationDelay: `${200 + letterIndex++ * 55}ms` }}>
+              {"\u00A0"}
+            </span>
+          )}
         </span>
       ))}
     </h1>
@@ -88,15 +109,14 @@ function Shot({
   return (
     <figure className={`shot ${photo.orientation === "portrait" ? "shot--portrait" : ""} ${className}`}>
       <button type="button" className="shot__button" onClick={onOpen} aria-label={`Open ${photo.title} larger`}>
-        <span className={`shot__imgwrap shot__imgwrap--${ratio}`}>
-          <img src={photo.thumb} alt={photo.title} loading="lazy" />
-          <HandFrame variant={index % 3} orientation={photo.orientation} ratio={ratio} />
+        <span className="polaroid" style={polaroidTilt(index)}>
+          <span className={`polaroid__photo ${ratio !== "standard" ? `polaroid__photo--${ratio}` : ""}`}>
+            <img src={photo.thumb} alt={photo.title} loading="lazy" style={cropStyle(photo)} />
+          </span>
+          <span className="polaroid__caption">{captionFor(photo)}</span>
         </span>
       </button>
       <Doodle className="shot__doodle shot__doodle--right" style={doodleTilt(index)} />
-      <figcaption className="shot__caption">
-        <span>{captionFor(photo)}</span>
-      </figcaption>
     </figure>
   );
 }
@@ -104,8 +124,8 @@ function Shot({
 function YoutubeIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="2" y="5" width="20" height="14" rx="4" fill="#FF0000" />
-      <path d="M10.5 9.5 L15.5 12 L10.5 14.5 Z" fill="#ffffff" />
+      <rect x="1" y="4" width="22" height="16" rx="4.5" fill="#FF0000" />
+      <path d="M10.2 8.6 L16 12 L10.2 15.4 Z" fill="#ffffff" />
     </svg>
   );
 }
@@ -120,9 +140,10 @@ function InstagramIcon() {
           <stop offset="1" stopColor="#962fbf" />
         </linearGradient>
       </defs>
-      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="url(#ig-grad)" strokeWidth="1.8" />
-      <circle cx="12" cy="12" r="4" fill="none" stroke="url(#ig-grad)" strokeWidth="1.8" />
-      <circle cx="17.2" cy="6.8" r="1.3" fill="#d62976" />
+      <rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig-grad)" />
+      <rect x="7.3" y="7.3" width="9.4" height="9.4" rx="3.1" fill="none" stroke="#fff" strokeWidth="1.7" />
+      <circle cx="12" cy="12" r="2.25" fill="none" stroke="#fff" strokeWidth="1.7" />
+      <circle cx="16.3" cy="7.7" r="1.1" fill="#fff" />
     </svg>
   );
 }
@@ -151,9 +172,11 @@ export default function Home() {
             aria-label={`Open ${heroPhoto.title} larger`}
           >
             <span className="tape-real tape-real--tl" aria-hidden="true" />
-            <span className="hero__imgwrap hero__imgwrap--tilted">
-              <img src={heroPhoto.thumb} alt={heroPhoto.title} loading="eager" draggable={false} />
-              <HandFrame variant={0} orientation={heroPhoto.orientation} ratio="standard" />
+            <span className="polaroid polaroid--hero" style={{ ["--polaroid-tilt" as string]: "-2deg" } as CSSProperties}>
+              <span className="polaroid__photo">
+                <img src={heroPhoto.thumb} alt={heroPhoto.title} loading="eager" draggable={false} style={cropStyle(heroPhoto)} />
+              </span>
+              <span className="polaroid__caption">{captionFor(heroPhoto)}</span>
             </span>
           </button>
         </Reveal>
@@ -205,7 +228,7 @@ export default function Home() {
           </div>
 
           <Reveal direction="none" className="dossier">
-            <p className="dossier__eyebrow">The contact sheet</p>
+            <p className="dossier__eyebrow">Meet these cats</p>
             <div className="dossier__grid">
               {squares.map((photo, i) => (
                 <Shot key={photo.id} photo={photo} index={3 + i} ratio="square" onOpen={() => open(photo)} />

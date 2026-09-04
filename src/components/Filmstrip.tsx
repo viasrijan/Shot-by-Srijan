@@ -7,6 +7,14 @@ interface FilmstripProps {
   onOpen: (photo: Photo) => void;
 }
 
+function LedStrip({ position }: { position: "top" | "bottom" }) {
+  return (
+    <span className={`led-strip led-strip--${position}`} aria-hidden="true">
+      <span className="led-strip__chase" />
+    </span>
+  );
+}
+
 export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
   const doubled = [...photos, ...photos];
   const played = useRef(false);
@@ -23,6 +31,8 @@ export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
   return (
     <section className="filmstrip filmstrip--marquee" aria-label="Full-width moving slideshow">
       <div className="filmstrip__viewport filmstrip__viewport--marquee">
+        <LedStrip position="top" />
+        <LedStrip position="bottom" />
         <div className="filmstrip__marquee">
           {doubled.map((photo, i) => (
             <button
