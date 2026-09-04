@@ -1,11 +1,11 @@
 import { useState } from "react";
-import type { CSSProperties } from "react";
+import type { ComponentType, CSSProperties } from "react";
 import { photos, type Photo } from "../data/photos";
 import Lightbox from "../components/Lightbox";
 import Reveal from "../components/Reveal";
 import Filmstrip from "../components/Filmstrip";
 import Orbs from "../components/Orbs";
-import { Camera, Flower, Sparkle, Star } from "../components/Doodles";
+import { Camera, Flower, Sparkle, Star, type DoodleProps } from "../components/Doodles";
 import { playShutter } from "../components/sfx";
 
 const heroPhoto = photos[0];
@@ -21,7 +21,7 @@ const CAPTIONS: Record<string, string> = {
   "dsc00988": "walls keep good secrets",
   "dsc01073": "golden hour, no filter needed",
   "dsc01088": "small things, big mood",
-  "dsc01204-1": "primary colours, accidental art",
+  "dsc01204-1": "primary colours,\naccidental art",
   "dsc01368": "a quiet place to lay down",
   "dsc01370": "peeking through the green",
   "dsc01429-2": "main-character energy",
@@ -40,13 +40,44 @@ const squares: Photo[] = [photos[4], photos[5], photos[6], photos[9]];
 const portrait = photos[12];
 const triptych: Photo[] = [photos[7], photos[9], photos[15]];
 
-const BAND_DOODLES = [Star, Flower, Sparkle, Camera];
+// Colourful pushpins — one colour per print.
+const PIN_COLORS = ["red", "blue", "yellow", "green"];
 
-// Playful doodle tilts — every shot leans its own way.
-const DOODLE_TILTS = ["-14deg", "10deg", "-6deg", "16deg", "-18deg", "8deg", "-10deg", "14deg", "-4deg", "12deg"];
+// The corner doodles now drift across the site background instead of per-print.
+const SCATTERED: { C: ComponentType<DoodleProps>; left: string; top: string; size: number; tilt: string }[] = [
+  { C: Star, left: "5%", top: "9%", size: 52, tilt: "-14deg" },
+  { C: Sparkle, left: "24%", top: "5%", size: 24, tilt: "10deg" },
+  { C: Flower, left: "70%", top: "7%", size: 46, tilt: "16deg" },
+  { C: Star, left: "89%", top: "22%", size: 38, tilt: "-8deg" },
+  { C: Camera, left: "12%", top: "38%", size: 58, tilt: "8deg" },
+  { C: Sparkle, left: "46%", top: "27%", size: 22, tilt: "-12deg" },
+  { C: Flower, left: "88%", top: "46%", size: 50, tilt: "-6deg" },
+  { C: Star, left: "6%", top: "58%", size: 44, tilt: "12deg" },
+  { C: Sparkle, left: "55%", top: "62%", size: 26, tilt: "14deg" },
+  { C: Camera, left: "30%", top: "74%", size: 54, tilt: "-16deg" },
+  { C: Flower, left: "75%", top: "82%", size: 42, tilt: "6deg" },
+  { C: Sparkle, left: "14%", top: "90%", size: 22, tilt: "-10deg" },
+];
 
-function doodleTilt(i: number): CSSProperties {
-  return { ["--doodle-tilt" as string]: DOODLE_TILTS[i % DOODLE_TILTS.length] };
+function ScatterDoodles() {
+  return (
+    <div className="scatter" aria-hidden="true">
+      {SCATTERED.map(({ C, left, top, size, tilt }, i) => (
+        <C
+          key={i}
+          className="scatter__doodle"
+          style={{
+            left,
+            top,
+            width: size,
+            height: C === Camera ? Math.round(size * 0.75) : size,
+            animationDelay: `${700 + i * 180}ms`,
+            ["--doodle-tilt" as string]: tilt,
+          } as CSSProperties}
+        />
+      ))}
+    </div>
+  );
 }
 
 // Polaroids lean every which way, like prints tossed on a desk.
@@ -68,6 +99,16 @@ function cropStyle(photo: Photo): CSSProperties | undefined {
 
 function captionFor(photo: Photo): string {
   return CAPTIONS[photo.id] ?? photo.category;
+}
+
+// Captions may carry a manual "\n" to break a line (e.g. after the comma).
+function renderCaption(text: string) {
+  return text.split("\n").map((line, i, lines) => (
+    <span key={i}>
+      {line}
+      {i < lines.length - 1 && <br />}
+    </span>
+  ));
 }
 
 function BrushTitle({ text }: { text: string }) {
@@ -105,18 +146,17 @@ function Shot({
   onOpen: () => void;
   className?: string;
 }) {
-  const Doodle = BAND_DOODLES[index % BAND_DOODLES.length];
   return (
     <figure className={`shot ${photo.orientation === "portrait" ? "shot--portrait" : ""} ${className}`}>
       <button type="button" className="shot__button" onClick={onOpen} aria-label={`Open ${photo.title} larger`}>
         <span className="polaroid" style={polaroidTilt(index)}>
+          <span className={`pin pin--${PIN_COLORS[index % PIN_COLORS.length]}`} aria-hidden="true" />
           <span className={`polaroid__photo ${ratio !== "standard" ? `polaroid__photo--${ratio}` : ""}`}>
             <img src={photo.thumb} alt={photo.title} loading="lazy" style={cropStyle(photo)} />
           </span>
-          <span className="polaroid__caption">{captionFor(photo)}</span>
+          <span className="polaroid__caption">{renderCaption(captionFor(photo))}</span>
         </span>
       </button>
-      <Doodle className="shot__doodle shot__doodle--right" style={doodleTilt(index)} />
     </figure>
   );
 }
@@ -124,8 +164,8 @@ function Shot({
 function YoutubeIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="1" y="4" width="22" height="16" rx="4.5" fill="#FF0000" />
-      <path d="M10.2 8.6 L16 12 L10.2 15.4 Z" fill="#ffffff" />
+      <circle cx="12" cy="12" r="11" fill="#FF0000" />
+      <path d="M9.9 8.2 L16.3 12 L9.9 15.8 Z" fill="#ffffff" />
     </svg>
   );
 }
@@ -140,7 +180,7 @@ function InstagramIcon() {
           <stop offset="1" stopColor="#962fbf" />
         </linearGradient>
       </defs>
-      <rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig-grad)" />
+      <circle cx="12" cy="12" r="11" fill="url(#ig-grad)" />
       <rect x="7.3" y="7.3" width="9.4" height="9.4" rx="3.1" fill="none" stroke="#fff" strokeWidth="1.7" />
       <circle cx="12" cy="12" r="2.25" fill="none" stroke="#fff" strokeWidth="1.7" />
       <circle cx="16.3" cy="7.7" r="1.1" fill="#fff" />
@@ -162,6 +202,7 @@ export default function Home() {
 
   return (
     <div className="archive">
+      <ScatterDoodles />
       <section className="hero hero--split">
         <Orbs variant="hero" />
         <Reveal delay={120} direction="up">
@@ -171,12 +212,14 @@ export default function Home() {
             onClick={clickHero}
             aria-label={`Open ${heroPhoto.title} larger`}
           >
-            <span className="tape-real tape-real--tl" aria-hidden="true" />
             <span className="polaroid polaroid--hero" style={{ ["--polaroid-tilt" as string]: "-2deg" } as CSSProperties}>
+              <span className="pin pin--red" aria-hidden="true" />
+              <span className="tape-real tape-real--tr" aria-hidden="true" />
+              <span className="tape-real tape-real--bl" aria-hidden="true" />
               <span className="polaroid__photo">
                 <img src={heroPhoto.thumb} alt={heroPhoto.title} loading="eager" draggable={false} style={cropStyle(heroPhoto)} />
               </span>
-              <span className="polaroid__caption">{captionFor(heroPhoto)}</span>
+              <span className="polaroid__caption">{renderCaption(captionFor(heroPhoto))}</span>
             </span>
           </button>
         </Reveal>
