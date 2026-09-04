@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { photos, type Photo } from "../data/photos";
 import HandFrame from "../components/HandFrame";
 import Lightbox from "../components/Lightbox";
 import Reveal from "../components/Reveal";
 import Filmstrip from "../components/Filmstrip";
 import Orbs from "../components/Orbs";
-import { Camera, Diamond, Sparkle, Star, Tape } from "../components/Doodles";
+import { Camera, Diamond, Sparkle, Star } from "../components/Doodles";
 import { playShutter } from "../components/sfx";
 
 const heroPhoto = photos[0];
@@ -32,10 +32,12 @@ const CAPTIONS: Record<string, string> = {
 };
 
 const bands = [
-  { id: "a", bg: photos[2], items: [photos[2], photos[3], photos[5], photos[6]] },
-  { id: "b", bg: photos[11], items: [photos[8], photos[10], photos[11]] },
-  { id: "c", bg: photos[14], items: [photos[13], photos[14], photos[15]] },
+  { id: "a", items: [photos[2], photos[3], photos[5], photos[6]] },
+  { id: "b", items: [photos[8], photos[10], photos[11]] },
+  { id: "c", items: [photos[13], photos[14], photos[15]] },
 ];
+
+const BAND_DOODLES = [Star, Diamond, Sparkle, Camera];
 
 function Mark() {
   return (
@@ -56,48 +58,15 @@ function Mark() {
   );
 }
 
-function useTypewriter(lines: string[], start = true) {
-  const [out, setOut] = useState<string[]>(["", ""]);
-  useEffect(() => {
-    if (!start) return;
-    let line = 0;
-    let ch = 0;
-    let cancelled = false;
-    const timers: number[] = [];
-    const tick = () => {
-      if (cancelled) return;
-      if (line >= lines.length) return;
-      const target = lines[line];
-      if (ch <= target.length) {
-        setOut((prev) => {
-          const next = [...prev];
-          next[line] = target.slice(0, ch);
-          return next;
-        });
-        ch += 1;
-        timers.push(window.setTimeout(tick, line === 0 ? 70 : 85));
-      } else {
-        line += 1;
-        ch = 0;
-        timers.push(window.setTimeout(tick, 220));
-      }
-    };
-    timers.push(window.setTimeout(tick, 350));
-    return () => {
-      cancelled = true;
-      timers.forEach((t) => window.clearTimeout(t));
-    };
-  }, [start]);
-  return out;
-}
-
 function Shot({ photo, variant, onOpen }: { photo: Photo; variant: number; onOpen: () => void }) {
+  const Doodle = BAND_DOODLES[variant % BAND_DOODLES.length];
   return (
     <figure className={`shot${photo.orientation === "portrait" ? " shot--portrait" : ""}`}>
       <button type="button" className="shot__button" onClick={onOpen} aria-label={`Open ${photo.title} larger`}>
         <img src={photo.thumb} alt={photo.title} loading="lazy" />
         <HandFrame variant={variant} orientation={photo.orientation} ratio={photo.orientation === "portrait" ? "portrait" : "standard"} />
       </button>
+      <Doodle className="shot__doodle" />
       <figcaption className="shot__caption">
         <strong>{photo.title}</strong>
         <span>{CAPTIONS[photo.id] ?? photo.category}</span>
@@ -110,7 +79,6 @@ export default function Home() {
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const [flash, setFlash] = useState(false);
   const open = (photo: Photo) => setViewerIndex(photos.indexOf(photo));
-  const [line1, line2] = useTypewriter(["Shot by", "Srijan"]);
 
   const clickHero = () => {
     playShutter(0.18);
@@ -129,18 +97,10 @@ export default function Home() {
               <span className="hero__mark hero__mark--shutter" aria-hidden="true">
                 <Mark />
               </span>
-              <h1 className="hero__title hero__title--type" aria-label="Shot by Srijan">
-                <span className="type-line">
-                  {line1}
-                  <span className="type-caret" aria-hidden="true" />
-                </span>
-                <span className="type-line">
-                  {line2}
-                  <span className="type-caret" aria-hidden="true" />
-                </span>
+              <h1 className="hero__title" aria-label="Shot by Srijan">
+                <span>Shot by</span>
+                <span>Srijan</span>
               </h1>
-              <Star className="hero__doodle hero__doodle--star" />
-              <Sparkle className="hero__doodle hero__doodle--sparkle" />
             </div>
             <div className="hero__bottom hero__bottom--center">
               <p>A journal of frames that I&apos;ve captured</p>
@@ -150,31 +110,21 @@ export default function Home() {
         </Reveal>
         <Reveal delay={120}>
           <button type="button" className={`hero__media${flash ? " hero__media--flash" : ""}`} onClick={clickHero} aria-label={`Open ${heroPhoto.title} larger`}>
-            <Tape className="hero__tape hero__tape--tl" rotate="-8deg" />
-            <Tape className="hero__tape hero__tape--tr" rotate="7deg" />
+            <span className="tape-real tape-real--tl" aria-hidden="true" />
+            <span className="tape-real tape-real--tr" aria-hidden="true" />
             <span className="hero__imgwrap hero__imgwrap--tilted">
               <img src={heroPhoto.thumb} alt={heroPhoto.title} loading="eager" draggable={false} />
               <HandFrame variant={0} orientation={heroPhoto.orientation} ratio="standard" />
-              <Diamond className="hero__doodle hero__doodle--diamond" />
             </span>
-            <span className="hero__caption">
-              <strong>{heroPhoto.title}</strong>
-              <em>{CAPTIONS[heroPhoto.id]}</em>
-            </span>
-            <Camera className="hero__doodle hero__doodle--camera" />
           </button>
         </Reveal>
       </section>
 
-      <Filmstrip photos={reel} captions={CAPTIONS} onOpen={open} />
+      <Filmstrip photos={reel} onOpen={open} />
 
       {bands.map((band) => (
         <section key={band.id} className={`band band--${band.id}`}>
           <Orbs variant="band" />
-          <div className="band__bg" aria-hidden="true">
-            <img src={band.bg.thumb} alt="" loading="lazy" />
-            <div className="band__scrim" />
-          </div>
           <div className="band__inner">
             {band.items.map((photo, i) => (
               <Reveal key={photo.id} delay={i * 90} className={`band-slot band-slot--${i}`}>
