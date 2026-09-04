@@ -10,7 +10,7 @@ import { playShutter } from "../components/sfx";
 
 const heroPhoto = photos[0];
 
-const reel = photos;
+const reel = photos.slice(1);
 
 const CAPTIONS: Record<string, string> = {
   "dsc00098-2": "held that stare a second too long",
@@ -39,6 +39,12 @@ const bands = [
 
 const BAND_DOODLES = [Star, Diamond, Sparkle, Camera];
 
+// Alternate frames across each row of two: right, left, right, left…
+function rowHasFrame(i: number): boolean {
+  const pair = Math.floor(i / 2);
+  return pair % 2 === 0 ? i % 2 === 1 : i % 2 === 0;
+}
+
 function Mark() {
   return (
     <svg viewBox="0 0 64 64" aria-hidden="true" className="mark__svg">
@@ -51,22 +57,26 @@ function Mark() {
         <path d="M22 14.7 L43 31" />
         <path d="M42 14.7 L38.3 41" />
       </g>
-      <g className="mark__shutter" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-        <path d="M32 22 L32 28 M42 32 L36 32 M32 42 L32 36 M22 32 L28 32" />
-      </g>
     </svg>
   );
 }
 
-function Shot({ photo, variant, onOpen }: { photo: Photo; variant: number; onOpen: () => void }) {
+function Shot({ photo, variant, framed, onOpen }: { photo: Photo; variant: number; framed: boolean; onOpen: () => void }) {
   const Doodle = BAND_DOODLES[variant % BAND_DOODLES.length];
   return (
     <figure className={`shot${photo.orientation === "portrait" ? " shot--portrait" : ""}`}>
       <button type="button" className="shot__button" onClick={onOpen} aria-label={`Open ${photo.title} larger`}>
         <img src={photo.thumb} alt={photo.title} loading="lazy" />
-        <HandFrame variant={variant} orientation={photo.orientation} ratio={photo.orientation === "portrait" ? "portrait" : "standard"} />
+        {framed && (
+          <HandFrame
+            variant={variant}
+            orientation={photo.orientation}
+            ratio={photo.orientation === "portrait" ? "portrait" : "standard"}
+            tone={variant % 3}
+          />
+        )}
       </button>
-      <Doodle className="shot__doodle" />
+      <Doodle className={`shot__doodle shot__doodle--${variant % 2 === 0 ? "right" : "left"}`} />
       <figcaption className="shot__caption">
         <strong>{photo.title}</strong>
         <span>{CAPTIONS[photo.id] ?? photo.category}</span>
@@ -91,10 +101,10 @@ export default function Home() {
     <div className="archive">
       <section className="hero hero--split">
         <Orbs variant="hero" />
-        <Reveal>
+        <Reveal direction="down">
           <div className="hero__split">
             <div className="hero__brand">
-              <span className="hero__mark hero__mark--shutter" aria-hidden="true">
+              <span className="hero__mark" aria-hidden="true">
                 <Mark />
               </span>
               <h1 className="hero__title" aria-label="Shot by Srijan">
@@ -104,14 +114,12 @@ export default function Home() {
             </div>
             <div className="hero__bottom hero__bottom--center">
               <p>A journal of frames that I&apos;ve captured</p>
-              <span>Scroll to explore</span>
             </div>
           </div>
         </Reveal>
-        <Reveal delay={120}>
+        <Reveal delay={120} direction="up">
           <button type="button" className={`hero__media${flash ? " hero__media--flash" : ""}`} onClick={clickHero} aria-label={`Open ${heroPhoto.title} larger`}>
             <span className="tape-real tape-real--tl" aria-hidden="true" />
-            <span className="tape-real tape-real--tr" aria-hidden="true" />
             <span className="hero__imgwrap hero__imgwrap--tilted">
               <img src={heroPhoto.thumb} alt={heroPhoto.title} loading="eager" draggable={false} />
               <HandFrame variant={0} orientation={heroPhoto.orientation} ratio="standard" />
@@ -120,15 +128,15 @@ export default function Home() {
         </Reveal>
       </section>
 
-      <Filmstrip photos={reel} captions={CAPTIONS} onOpen={open} />
+      <Filmstrip photos={reel} onOpen={open} />
 
       {bands.map((band) => (
         <section key={band.id} className={`band band--${band.id}`}>
           <Orbs variant="band" />
           <div className="band__inner">
             {band.items.map((photo, i) => (
-              <Reveal key={photo.id} delay={i * 90} className={`band-slot band-slot--${i}`}>
-                <Shot photo={photo} variant={i} onOpen={() => open(photo)} />
+              <Reveal key={photo.id} delay={i * 90} direction={i % 2 === 0 ? "left" : "right"} className={`band-slot band-slot--${i}`}>
+                <Shot photo={photo} variant={i} framed={rowHasFrame(i)} onOpen={() => open(photo)} />
               </Reveal>
             ))}
           </div>

@@ -5,11 +5,10 @@ import { playShutter } from "./sfx";
 
 interface FilmstripProps {
   photos: Photo[];
-  captions: Record<string, string>;
   onOpen: (photo: Photo) => void;
 }
 
-export default function Filmstrip({ photos, captions, onOpen }: FilmstripProps) {
+export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
   const doubled = [...photos, ...photos];
   const played = useRef(false);
 
@@ -25,7 +24,6 @@ export default function Filmstrip({ photos, captions, onOpen }: FilmstripProps) 
   return (
     <section className="filmstrip filmstrip--marquee" aria-label="Full-width moving slideshow">
       <Orbs variant="reel" />
-      <p className="filmstrip__kicker">Scroll slowly</p>
       <div className="filmstrip__viewport filmstrip__viewport--marquee">
         <div className="filmstrip__marquee">
           {doubled.map((photo, i) => (
@@ -46,31 +44,6 @@ export default function Filmstrip({ photos, captions, onOpen }: FilmstripProps) 
             </button>
           ))}
         </div>
-      </div>
-      <div className="filmstrip__pair">
-        <button
-          type="button"
-          className="filmstrip__feature filmstrip__feature--plain"
-          onClick={() => {
-            playShutter(0.14);
-            onOpen(photos[4]);
-          }}
-          aria-label={`Open ${photos[4].title} larger`}
-        >
-          <img src={photos[4].thumb} alt={photos[4].title} loading="lazy" draggable={false} />
-        </button>
-        <button
-          type="button"
-          className="filmstrip__feature filmstrip__feature--copper"
-          onClick={() => {
-            playShutter(0.14);
-            onOpen(photos[2]);
-          }}
-          aria-label={`Open ${photos[2].title} larger`}
-        >
-          <img src={photos[2].thumb} alt={photos[2].title} loading="lazy" draggable={false} />
-          <span className="filmstrip__feature-caption">{captions[photos[2].id] ?? photos[2].title}</span>
-        </button>
       </div>
     </section>
   );

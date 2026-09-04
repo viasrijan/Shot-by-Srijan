@@ -3,6 +3,8 @@
 // (no bent curves). It is scaled uniformly into a viewBox that matches
 // the container ratio, so the frame stays slightly larger than the
 // image but never a different proportion.
+import type { CSSProperties } from "react";
+
 const FRAMES: string[][] = [
   [
     "M 1 2 L 99 2 L 99 98 L 1 98 Z",
@@ -35,14 +37,18 @@ function ratioForOrientation(orientation?: string, fallback: FrameRatio = "stand
   return fallback;
 }
 
+const TONES = ["#f2c94c", "#8fa8ff", "#ff8fb0"];
+
 export default function HandFrame({
   variant = 0,
   ratio,
   orientation,
+  tone,
 }: {
   variant?: number;
   ratio?: FrameRatio;
   orientation?: "landscape" | "portrait";
+  tone?: number;
 }) {
   const resolved: FrameRatio = ratio ?? ratioForOrientation(orientation, "standard");
   const box = RATIO_BOX[resolved];
@@ -56,6 +62,7 @@ export default function HandFrame({
       viewBox={`0 0 ${box.w} ${box.h}`}
       preserveAspectRatio="none"
       aria-hidden="true"
+      style={tone !== undefined ? ({ color: TONES[tone % TONES.length] } as CSSProperties) : undefined}
     >
       <g transform={`scale(${sx} ${sy})`}>
         {paths.map((d) => (

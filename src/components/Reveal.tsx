@@ -1,8 +1,13 @@
 import { ReactNode, useEffect, useRef } from "react";
 
-interface RevealProps { children: ReactNode; className?: string; delay?: number; }
+interface RevealProps {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  direction?: "up" | "down" | "left" | "right" | "none";
+}
 
-export default function Reveal({ children, className = "", delay = 0 }: RevealProps) {
+export default function Reveal({ children, className = "", delay = 0, direction = "up" }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const element = ref.current;
@@ -13,5 +18,14 @@ export default function Reveal({ children, className = "", delay = 0 }: RevealPr
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
-  return <div ref={ref} className={`reveal ${className}`} style={{ "--delay": `${delay}ms` } as React.CSSProperties}>{children}</div>;
+  return (
+    <div
+      ref={ref}
+      className={`reveal ${className}`}
+      data-direction={direction}
+      style={{ "--delay": `${delay}ms` } as React.CSSProperties}
+    >
+      {children}
+    </div>
+  );
 }
