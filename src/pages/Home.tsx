@@ -33,11 +33,7 @@ const CAPTIONS: Record<string, string> = {
   "dsc07039": "look up more often",
 };
 
-const bands = [
-  { id: "a", items: [photos[2], photos[3], photos[5], photos[6]] },
-  { id: "b", items: [photos[8], photos[10], photos[11]] },
-  { id: "c", items: [photos[13], photos[14], photos[15]] },
-];
+const gallery = [photos[2], photos[3], photos[5], photos[6], photos[8], photos[10], photos[11], photos[13], photos[14], photos[15]];
 
 const BAND_DOODLES = [Star, Diamond, Sparkle, Camera];
 
@@ -171,18 +167,16 @@ export default function Home() {
 
       <Filmstrip photos={reel} onOpen={open} />
 
-      {bands.map((band) => (
-        <section key={band.id} className={`band band--${band.id}`}>
-          <Orbs variant="band" />
-          <div className="band__inner">
-            {band.items.map((photo, i) => (
-              <Reveal key={photo.id} delay={i * 90} direction="none" className={`band-slot band-slot--${i}`}>
-                <Shot photo={photo} variant={i} framed={rowHasFrame(i)} onOpen={() => open(photo)} />
-              </Reveal>
-            ))}
-          </div>
-        </section>
-      ))}
+      <section className="gallery" aria-label="Gallery">
+        <Orbs variant="band" />
+        <div className="gallery__grid">
+          {gallery.map((photo, i) => (
+            <Reveal key={photo.id} delay={(i % 4) * 90} direction="none" className={`gallery__slot gallery__slot--${i % 2}`}>
+              <Shot photo={photo} variant={i} framed={rowHasFrame(i)} onOpen={() => open(photo)} />
+            </Reveal>
+          ))}
+        </div>
+      </section>
 
       {viewerIndex !== null && (
         <Lightbox photos={photos} index={viewerIndex} onClose={() => setViewerIndex(null)} onNavigate={setViewerIndex} />
