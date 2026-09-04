@@ -177,7 +177,7 @@ export default function Home() {
           <Orbs variant="band" />
           <div className="band__inner">
             {band.items.map((photo, i) => (
-              <Reveal key={photo.id} delay={i * 90} direction={i % 2 === 0 ? "left" : "right"} className={`band-slot band-slot--${i}`}>
+              <Reveal key={photo.id} delay={i * 90} direction="none" className={`band-slot band-slot--${i}`}>
                 <Shot photo={photo} variant={i} framed={rowHasFrame(i)} onOpen={() => open(photo)} />
               </Reveal>
             ))}
