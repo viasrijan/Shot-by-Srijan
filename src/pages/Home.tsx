@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { photos, type Photo } from "../data/photos";
 import HandFrame from "../components/HandFrame";
 import Lightbox from "../components/Lightbox";
@@ -43,20 +43,27 @@ function rowHasFrame(i: number): boolean {
   return pair % 2 === 0 ? i % 2 === 1 : i % 2 === 0;
 }
 
-function Mark() {
-  return (
-    <svg viewBox="0 0 64 64" aria-hidden="true" className="mark__svg">
-      <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-        <path d="M32 11.8 C43.6 11.1 52.7 19.6 52.4 31.6 C52.1 43.7 43.4 52.5 31.7 52.2 C20.2 51.9 11.5 43.2 11.9 31.8 C12.3 20.4 20.9 12.5 32 11.8 Z" />
-        <path d="M52 32 L27.4 42" />
-        <path d="M42 49.3 L21 33" />
-        <path d="M22 49.3 L25.7 23" />
-        <path d="M12 32 L36.7 22" />
-        <path d="M22 14.7 L43 31" />
-        <path d="M42 14.7 L38.3 41" />
-      </g>
-    </svg>
-  );
+function useTypewriter(text: string, speed = 75) {
+  const [out, setOut] = useState("");
+  useEffect(() => {
+    let ch = 0;
+    let cancelled = false;
+    const timers: number[] = [];
+    const tick = () => {
+      if (cancelled) return;
+      if (ch <= text.length) {
+        setOut(text.slice(0, ch));
+        ch += 1;
+        timers.push(window.setTimeout(tick, speed));
+      }
+    };
+    timers.push(window.setTimeout(tick, 400));
+    return () => {
+      cancelled = true;
+      timers.forEach((t) => window.clearTimeout(t));
+    };
+  }, [text, speed]);
+  return out;
 }
 
 function Shot({ photo, variant, framed, onOpen }: { photo: Photo; variant: number; framed: boolean; onOpen: () => void }) {
@@ -75,7 +82,7 @@ function Shot({ photo, variant, framed, onOpen }: { photo: Photo; variant: numbe
           )}
         </span>
       </button>
-      <Doodle className={`shot__doodle shot__doodle--${variant % 2 === 0 ? "right" : "left"}`} />
+      <Doodle className="shot__doodle shot__doodle--right" />
       <figcaption className="shot__caption">
         <span>{CAPTIONS[photo.id] ?? photo.category}</span>
       </figcaption>
@@ -121,10 +128,21 @@ export default function Home() {
     open(heroPhoto);
   };
 
+  const typedTitle = useTypewriter("Shot by Srijan");
+
   return (
     <div className="archive">
       <section className="hero hero--split">
         <Orbs variant="hero" />
+        <Reveal delay={120} direction="up">
+          <button type="button" className={`hero__media${flash ? " hero__media--flash" : ""}`} onClick={clickHero} aria-label={`Open ${heroPhoto.title} larger`}>
+            <span className="tape-real tape-real--tl" aria-hidden="true" />
+            <span className="hero__imgwrap hero__imgwrap--tilted">
+              <img src={heroPhoto.thumb} alt={heroPhoto.title} loading="eager" draggable={false} />
+              <HandFrame variant={0} orientation={heroPhoto.orientation} ratio="standard" />
+            </span>
+          </button>
+        </Reveal>
         <Reveal direction="down">
           <div className="hero__split">
             <a
@@ -136,10 +154,10 @@ export default function Home() {
               }}
               aria-label="Shot by Srijan — back to homepage"
             >
-              <span className="hero__mark" aria-hidden="true">
-                <Mark />
-              </span>
-              <h1 className="hero__title">Shot by Srijan</h1>
+              <h1 className="hero__title hero__title--typing" aria-label="Shot by Srijan">
+                {typedTitle}
+                <span className="type-caret" aria-hidden="true" />
+              </h1>
             </a>
             <div className="hero__bottom hero__bottom--center">
               <p>A journal of frames that I&apos;ve captured</p>
@@ -153,15 +171,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </Reveal>
-        <Reveal delay={120} direction="up">
-          <button type="button" className={`hero__media${flash ? " hero__media--flash" : ""}`} onClick={clickHero} aria-label={`Open ${heroPhoto.title} larger`}>
-            <span className="tape-real tape-real--tl" aria-hidden="true" />
-            <span className="hero__imgwrap hero__imgwrap--tilted">
-              <img src={heroPhoto.thumb} alt={heroPhoto.title} loading="eager" draggable={false} />
-              <HandFrame variant={0} orientation={heroPhoto.orientation} ratio="standard" />
-            </span>
-          </button>
         </Reveal>
       </section>
 

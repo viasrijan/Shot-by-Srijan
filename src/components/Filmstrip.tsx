@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import type { Photo } from "../data/photos";
-import Orbs from "./Orbs";
 import { playShutter } from "./sfx";
 
 interface FilmstripProps {
@@ -23,7 +22,6 @@ export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
 
   return (
     <section className="filmstrip filmstrip--marquee" aria-label="Full-width moving slideshow">
-      <Orbs variant="reel" />
       <div className="filmstrip__viewport filmstrip__viewport--marquee">
         <div className="filmstrip__marquee">
           {doubled.map((photo, i) => (
