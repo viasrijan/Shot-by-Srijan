@@ -4,7 +4,6 @@ import { photos, type Photo } from "../data/photos";
 import Lightbox from "../components/Lightbox";
 import Reveal from "../components/Reveal";
 import Filmstrip from "../components/Filmstrip";
-import Orbs from "../components/Orbs";
 import { Camera, Flower, Sparkle, Star, type DoodleProps } from "../components/Doodles";
 import { playShutter } from "../components/sfx";
 
@@ -43,20 +42,21 @@ const triptych: Photo[] = [photos[7], photos[9], photos[15]];
 // Colourful pushpins — one colour per print.
 const PIN_COLORS = ["red", "blue", "yellow", "green"];
 
-// The corner doodles now drift across the site background instead of per-print.
+// Doodles drift only across the gallery section (the scatter layer lives
+// inside .editorial now), floating slowly with a pen draw-in on each stroke.
 const SCATTERED: { C: ComponentType<DoodleProps>; left: string; top: string; size: number; tilt: string }[] = [
-  { C: Star, left: "5%", top: "9%", size: 52, tilt: "-14deg" },
-  { C: Sparkle, left: "24%", top: "5%", size: 24, tilt: "10deg" },
-  { C: Flower, left: "70%", top: "7%", size: 46, tilt: "16deg" },
-  { C: Star, left: "89%", top: "22%", size: 38, tilt: "-8deg" },
-  { C: Camera, left: "12%", top: "38%", size: 58, tilt: "8deg" },
-  { C: Sparkle, left: "46%", top: "27%", size: 22, tilt: "-12deg" },
-  { C: Flower, left: "88%", top: "46%", size: 50, tilt: "-6deg" },
-  { C: Star, left: "6%", top: "58%", size: 44, tilt: "12deg" },
-  { C: Sparkle, left: "55%", top: "62%", size: 26, tilt: "14deg" },
-  { C: Camera, left: "30%", top: "74%", size: 54, tilt: "-16deg" },
-  { C: Flower, left: "75%", top: "82%", size: 42, tilt: "6deg" },
-  { C: Sparkle, left: "14%", top: "90%", size: 22, tilt: "-10deg" },
+  { C: Star, left: "4%", top: "3%", size: 48, tilt: "-14deg" },
+  { C: Sparkle, left: "22%", top: "2%", size: 22, tilt: "10deg" },
+  { C: Flower, left: "72%", top: "4%", size: 44, tilt: "16deg" },
+  { C: Star, left: "90%", top: "13%", size: 36, tilt: "-8deg" },
+  { C: Camera, left: "7%", top: "25%", size: 56, tilt: "8deg" },
+  { C: Sparkle, left: "45%", top: "21%", size: 20, tilt: "-12deg" },
+  { C: Flower, left: "90%", top: "33%", size: 48, tilt: "-6deg" },
+  { C: Star, left: "5%", top: "45%", size: 42, tilt: "12deg" },
+  { C: Sparkle, left: "55%", top: "52%", size: 24, tilt: "14deg" },
+  { C: Camera, left: "24%", top: "63%", size: 52, tilt: "-16deg" },
+  { C: Flower, left: "78%", top: "74%", size: 40, tilt: "6deg" },
+  { C: Sparkle, left: "12%", top: "88%", size: 20, tilt: "-10deg" },
 ];
 
 function ScatterDoodles() {
@@ -97,8 +97,13 @@ function cropStyle(photo: Photo): CSSProperties | undefined {
   return position ? ({ objectPosition: position } as CSSProperties) : undefined;
 }
 
+// Captions read as sentences — the first letter of each line is capitalised.
+function capitalizeCaption(text: string): string {
+  return text.replace(/(^|\n)([a-z])/g, (_match, head: string, ch: string) => head + ch.toUpperCase());
+}
+
 function captionFor(photo: Photo): string {
-  return CAPTIONS[photo.id] ?? photo.category;
+  return capitalizeCaption(CAPTIONS[photo.id] ?? photo.category);
 }
 
 // Captions may carry a manual "\n" to break a line (e.g. after the comma).
@@ -111,24 +116,26 @@ function renderCaption(text: string) {
   ));
 }
 
-function BrushTitle({ text }: { text: string }) {
+function BrushTitle({ prefix, main }: { prefix: string; main: string }) {
   let letterIndex = 0;
-  return (
-    <h1 className="hero__title" aria-label={text}>
-      {text.split(" ").map((word, w, words) => (
-        <span key={w} className="brush-word" aria-hidden="true">
-          {word.split("").map((ch, i) => (
-            <span key={i} className="brush-letter" style={{ animationDelay: `${200 + letterIndex++ * 55}ms` }}>
-              {ch}
-            </span>
-          ))}
-          {w < words.length - 1 && (
-            <span className="brush-letter" style={{ animationDelay: `${200 + letterIndex++ * 55}ms` }}>
-              {"\u00A0"}
-            </span>
-          )}
+  const letters = (word: string, keyBase: string, small: boolean) => (
+    <span key={keyBase} className={`brush-word${small ? " brush-word--small" : ""}`} aria-hidden="true">
+      {word.split("").map((ch, i) => (
+        <span key={`${keyBase}-${i}`} className="brush-letter" style={{ animationDelay: `${200 + letterIndex++ * 55}ms` }}>
+          {ch}
         </span>
       ))}
+    </span>
+  );
+  return (
+    <h1 className="hero__title" aria-label={`${prefix} ${main}`}>
+      {prefix.split(" ").map((word, i, words) => (
+        <span key={`prefix-${i}`}>
+          {letters(word, `prefix-${i}`, true)}
+          {i < words.length - 1 ? " " : ""}
+        </span>
+      ))}{" "}
+      {letters(main, "main", false)}
     </h1>
   );
 }
@@ -139,18 +146,20 @@ function Shot({
   ratio,
   onOpen,
   className = "",
+  pin = "tl",
 }: {
   photo: Photo;
   index: number;
   ratio: "standard" | "portrait" | "square";
   onOpen: () => void;
   className?: string;
+  pin?: "tl" | "tr";
 }) {
   return (
     <figure className={`shot ${photo.orientation === "portrait" ? "shot--portrait" : ""} ${className}`}>
       <button type="button" className="shot__button" onClick={onOpen} aria-label={`Open ${photo.title} larger`}>
         <span className="polaroid" style={polaroidTilt(index)}>
-          <span className={`pin pin--${PIN_COLORS[index % PIN_COLORS.length]}`} aria-hidden="true" />
+          <span className={`pin pin--${PIN_COLORS[index % PIN_COLORS.length]} pin--${pin}`} aria-hidden="true" />
           <span className={`polaroid__photo ${ratio !== "standard" ? `polaroid__photo--${ratio}` : ""}`}>
             <img src={photo.thumb} alt={photo.title} loading="lazy" style={cropStyle(photo)} />
           </span>
@@ -202,9 +211,7 @@ export default function Home() {
 
   return (
     <div className="archive">
-      <ScatterDoodles />
       <section className="hero hero--split">
-        <Orbs variant="hero" />
         <Reveal delay={120} direction="up">
           <button
             type="button"
@@ -213,7 +220,7 @@ export default function Home() {
             aria-label={`Open ${heroPhoto.title} larger`}
           >
             <span className="polaroid polaroid--hero" style={{ ["--polaroid-tilt" as string]: "-2deg" } as CSSProperties}>
-              <span className="pin pin--red" aria-hidden="true" />
+              <span className="pin pin--red pin--tl" aria-hidden="true" />
               <span className="tape-real tape-real--tr" aria-hidden="true" />
               <span className="tape-real tape-real--bl" aria-hidden="true" />
               <span className="polaroid__photo">
@@ -234,7 +241,7 @@ export default function Home() {
               }}
               aria-label="Shot by Srijan — back to homepage"
             >
-              <BrushTitle text="Shot by Srijan" />
+              <BrushTitle prefix="Shot by" main="Srijan" />
             </a>
             <div className="hero__bottom hero__bottom--center">
               <p>A journal of frames that I&apos;ve captured</p>
@@ -254,19 +261,19 @@ export default function Home() {
       <Filmstrip photos={reel} onOpen={open} />
 
       <section className="editorial" aria-label="Selected frames">
-        <Orbs variant="band" />
+        <ScatterDoodles />
         <div className="editorial__inner">
           <div className="editorial__spread">
             <div className="editorial__col">
               <Reveal direction="none">
-                <Shot photo={editorial[0]} index={0} ratio="standard" onOpen={() => open(editorial[0])} />
+                <Shot photo={editorial[0]} index={0} ratio="standard" pin="tl" onOpen={() => open(editorial[0])} />
               </Reveal>
               <Reveal delay={110} direction="none">
-                <Shot photo={editorial[1]} index={1} ratio="standard" onOpen={() => open(editorial[1])} />
+                <Shot photo={editorial[1]} index={1} ratio="standard" pin="tl" onOpen={() => open(editorial[1])} />
               </Reveal>
             </div>
             <Reveal delay={150} direction="up" className="editorial__tall">
-              <Shot photo={editorial[2]} index={2} ratio="portrait" onOpen={() => open(editorial[2])} />
+              <Shot photo={editorial[2]} index={2} ratio="portrait" pin="tr" onOpen={() => open(editorial[2])} />
             </Reveal>
           </div>
 
@@ -274,33 +281,33 @@ export default function Home() {
             <p className="dossier__eyebrow">Meet these cats</p>
             <div className="dossier__grid">
               {squares.map((photo, i) => (
-                <Shot key={photo.id} photo={photo} index={3 + i} ratio="square" onOpen={() => open(photo)} />
+                <Shot key={photo.id} photo={photo} index={3 + i} ratio="square" pin={i < 2 ? "tl" : "tr"} onOpen={() => open(photo)} />
               ))}
             </div>
           </Reveal>
 
           <Reveal direction="up" className="editorial__feature">
-            <Shot photo={portrait} index={5} ratio="portrait" onOpen={() => open(portrait)} />
+            <Shot photo={portrait} index={5} ratio="portrait" pin="tl" onOpen={() => open(portrait)} />
           </Reveal>
 
           <div className="editorial__spread editorial__spread--mirror">
             <div className="editorial__col">
               <Reveal direction="none">
-                <Shot photo={mirrored[0]} index={6} ratio="standard" onOpen={() => open(mirrored[0])} />
+                <Shot photo={mirrored[0]} index={6} ratio="standard" pin="tr" onOpen={() => open(mirrored[0])} />
               </Reveal>
               <Reveal delay={110} direction="none">
-                <Shot photo={mirrored[1]} index={7} ratio="standard" onOpen={() => open(mirrored[1])} />
+                <Shot photo={mirrored[1]} index={7} ratio="standard" pin="tr" onOpen={() => open(mirrored[1])} />
               </Reveal>
             </div>
             <Reveal delay={150} direction="up" className="editorial__tall">
-              <Shot photo={mirrored[2]} index={8} ratio="portrait" onOpen={() => open(mirrored[2])} />
+              <Shot photo={mirrored[2]} index={8} ratio="portrait" pin="tl" onOpen={() => open(mirrored[2])} />
             </Reveal>
           </div>
 
           <div className="editorial__triptych">
             {triptych.map((photo, i) => (
               <Reveal key={photo.id} delay={i * 110} direction="none">
-                <Shot photo={photo} index={9 + i} ratio="standard" onOpen={() => open(photo)} />
+                <Shot photo={photo} index={9 + i} ratio="standard" pin={i === 2 ? "tr" : "tl"} onOpen={() => open(photo)} />
               </Reveal>
             ))}
           </div>
