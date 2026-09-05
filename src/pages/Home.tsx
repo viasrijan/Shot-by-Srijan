@@ -167,30 +167,11 @@ function Shot({
 }
 
 function YoutubeIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="11" fill="#FF0000" />
-      <path d="M9.9 8.2 L16.3 12 L9.9 15.8 Z" fill="#ffffff" />
-    </svg>
-  );
+  return <img src="/icons/youtube.png" alt="" aria-hidden="true" draggable={false} />;
 }
 
 function InstagramIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <defs>
-        <linearGradient id="ig-grad" x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0" stopColor="#feda75" />
-          <stop offset=".5" stopColor="#d62976" />
-          <stop offset="1" stopColor="#962fbf" />
-        </linearGradient>
-      </defs>
-      <circle cx="12" cy="12" r="11" fill="url(#ig-grad)" />
-      <rect x="7.3" y="7.3" width="9.4" height="9.4" rx="3.1" fill="none" stroke="#fff" strokeWidth="1.7" />
-      <circle cx="12" cy="12" r="2.25" fill="none" stroke="#fff" strokeWidth="1.7" />
-      <circle cx="16.3" cy="7.7" r="1.1" fill="#fff" />
-    </svg>
-  );
+  return <img src="/icons/instagram.png" alt="" aria-hidden="true" draggable={false} />;
 }
 
 export default function Home() {
