@@ -61,7 +61,8 @@ main { position: relative; z-index: 1; }
 .hero__toplogo svg { width: clamp(44px, 4vw, 64px); height: clamp(44px, 4vw, 64px); display: block; }
 .hero__mark { display: inline-flex; flex: none; color: var(--fg); }
 .hero__mark svg { width: clamp(88px, 8vw, 128px); height: clamp(88px, 8vw, 128px); }
-.hero__title { margin: 0 auto; font-family: var(--font-logo); font-weight: 700; letter-spacing: -.02em; line-height: 1.04; font-size: clamp(51px, 5.4vw, 93px); width: max-content; max-width: 100%; color: var(--fg); text-align: center; }
+.hero__title { margin: 0 auto; font-family: var(--font-logo); font-weight: 700; letter-spacing: 0; line-height: 1.04; font-size: clamp(51px, 5.4vw, 93px); width: max-content; max-width: 100%; color: var(--fg); text-align: center; }
+.hero__title > span:not(:last-child) { margin-right: .24em; }
 .hero__socials { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 0; }
 .hero__socials a { display: inline-flex; width: 64px; height: 64px; align-items: center; justify-content: center; transition: transform 300ms ease, opacity 300ms ease; }
 .hero__socials a:hover { transform: translateY(-2px); opacity: .85; }
@@ -76,31 +77,20 @@ main { position: relative; z-index: 1; }
 
 /* Polaroid prints — glossy white-to-light-grey plastic finish, soft inner shadows,
    with a handwritten caption strip. Each print leans its own way; hover straightens it. */
-.polaroid { position: relative; display: block; width: 85%; margin: 0 auto; padding: 4.5% 4.5% 0; background: linear-gradient(180deg, #cfcfcd 0%, #e3e3e1 30%, #f3f3f1 58%, #ffffff 85%, #f5f5f3 100%); border-radius: 4px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), inset 0 -1px 2px rgba(0, 0, 0, .12), inset 0 10px 18px rgba(255, 255, 255, .38), inset 0 -14px 26px rgba(0, 0, 0, .07), 0 18px 44px rgba(0, 0, 0, .5), 0 2px 8px rgba(0, 0, 0, .35); transform: rotate(var(--polaroid-tilt, 0deg)); transition: transform 450ms cubic-bezier(.22, 1, .36, 1); }
+.polaroid { position: relative; display: block; width: 85%; margin: 0 auto; padding: 2.4% 2.4% 0; container-type: inline-size; background: linear-gradient(180deg, #cfcfcd 0%, #e3e3e1 30%, #f3f3f1 58%, #ffffff 85%, #f5f5f3 100%); border-radius: 4px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), inset 0 -1px 2px rgba(0, 0, 0, .12), inset 0 10px 18px rgba(255, 255, 255, .38), inset 0 -14px 26px rgba(0, 0, 0, .07), 0 18px 44px rgba(0, 0, 0, .5), 0 2px 8px rgba(0, 0, 0, .35); transform: rotate(var(--polaroid-tilt, 0deg)); transition: transform 450ms cubic-bezier(.22, 1, .36, 1); }
 .polaroid::after { content: ""; position: absolute; inset: 0; z-index: 0; border-radius: inherit; background: linear-gradient(115deg, rgba(255, 255, 255, .5) 0%, rgba(255, 255, 255, .12) 28%, rgba(255, 255, 255, 0) 46%, rgba(0, 0, 0, .045) 78%, rgba(0, 0, 0, .08) 100%); pointer-events: none; }
 
-/* Colourful pushpins holding each print up. */
-/* Pushpins with a tilted 3D head — offset shadow, rim light and needle. */
-.pin { position: absolute; z-index: 3; top: -9px; left: 50%; width: 20px; height: 20px; margin-left: -10px; border-radius: 50%; pointer-events: none; transform: rotate(-12deg); }
-.pin::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--pin-hi) 0%, var(--pin-c) 40%, var(--pin-dark) 78%, rgba(0, 0, 0, .5) 100%); box-shadow: 3px 5px 7px rgba(0, 0, 0, .5), 1px 2px 3px rgba(0, 0, 0, .5), inset -2px -3px 4px rgba(0, 0, 0, .35), inset 2px 2px 3px rgba(255, 255, 255, .4); }
-.pin::after { content: ""; position: absolute; left: 50%; top: 82%; width: 2px; height: 9px; margin-left: -1px; border-radius: 1px; background: linear-gradient(180deg, #c9ccd4, #5f626b); box-shadow: 2px 3px 3px rgba(0, 0, 0, .45); transform: rotate(8deg); opacity: .95; }
-/* Corner placement — heads lean outward, clear of the photo. */
-.pin--tl { left: -10px; right: auto; margin-left: 0; transform: rotate(-16deg); }
-.pin--tr { left: auto; right: -10px; margin-left: 0; transform: rotate(16deg); }
-.pin--red { --pin-c: #e8362f; --pin-hi: #ffb3a8; --pin-dark: #8f120e; }
-.pin--blue { --pin-c: #2f7de8; --pin-hi: #a8ccff; --pin-dark: #12407e; }
-.pin--yellow { --pin-c: #f5c21e; --pin-hi: #ffeba3; --pin-dark: #8f6a06; }
-.pin--green { --pin-c: #2fae57; --pin-hi: #a6f0bd; --pin-dark: #0e5e2a; }
+/* Prints sit bare — pins removed. */
 .shot__button:hover .polaroid, .hero__media:hover .polaroid--hero { transform: rotate(0deg) translateY(-4px); }
 .polaroid__photo { position: relative; z-index: 1; display: block; width: 100%; aspect-ratio: 3 / 2; background: #101014; overflow: hidden; }
 /* Soft inner shadow over the photo edges — the frame gloss stays behind the photo. */
-.polaroid__photo::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 2px 14px rgba(0, 0, 0, .38), inset 0 -2px 10px rgba(0, 0, 0, .28), inset 2px 0 8px rgba(0, 0, 0, .18), inset -2px 0 8px rgba(0, 0, 0, .18); pointer-events: none; }
+.polaroid__photo::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 2px 18px rgba(0, 0, 0, .16), inset 0 -2px 14px rgba(0, 0, 0, .12), inset 2px 0 10px rgba(0, 0, 0, .08), inset -2px 0 10px rgba(0, 0, 0, .08); pointer-events: none; }
 .polaroid__photo--square { aspect-ratio: 1 / 1; }
 .polaroid__photo--portrait { aspect-ratio: 2 / 3; }
 .polaroid__photo img { display: block; width: 100%; height: 100%; object-fit: cover; filter: saturate(.97); transition: filter 500ms ease; }
 .shot__button:hover .polaroid__photo img, .hero__media:hover .polaroid__photo img { filter: saturate(1.08); }
-.polaroid__caption { position: relative; z-index: 1; display: block; padding: 3.5% 2% 4.5%; font-family: "Caveat", "Segoe Script", cursive; font-weight: 600; font-size: clamp(15px, 1.5vw, 21px); line-height: 1.15; color: #33322e; text-align: center; white-space: pre-line; }
-.polaroid--hero { padding: 3.2% 3.2% 0; }
+.polaroid__caption { position: relative; z-index: 1; display: block; padding: 2.2% 2% 2.4%; font-family: "Caveat", "Segoe Script", cursive; font-weight: 600; font-size: clamp(12px, 1.5vw, 21px); font-size: clamp(12px, 4.6cqw, 20px); line-height: 1.15; color: #33322e; text-align: center; white-space: pre-line; }
+.polaroid--hero { padding: 2.4% 2.4% 0; }
 
 /* Selected works slider */
 .slider { width: min(100% - 48px, 1180px); margin: 0 auto; padding: 22px 0 112px; }

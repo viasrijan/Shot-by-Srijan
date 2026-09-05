@@ -39,8 +39,7 @@ const squares: Photo[] = [photos[4], photos[5], photos[6], photos[9]];
 const portrait = photos[12];
 const triptych: Photo[] = [photos[7], photos[9], photos[15]];
 
-// Colourful pushpins — one colour per print.
-const PIN_COLORS = ["red", "blue", "yellow", "green"];
+// Bare prints — pins removed.
 
 // Doodles drift only across the gallery section (the scatter layer lives
 // inside .editorial now), floating slowly with a pen draw-in on each stroke.
@@ -146,20 +145,17 @@ function Shot({
   ratio,
   onOpen,
   className = "",
-  pin = "tl",
 }: {
   photo: Photo;
   index: number;
   ratio: "standard" | "portrait" | "square";
   onOpen: () => void;
   className?: string;
-  pin?: "tl" | "tr";
 }) {
   return (
     <figure className={`shot ${photo.orientation === "portrait" ? "shot--portrait" : ""} ${className}`}>
       <button type="button" className="shot__button" onClick={onOpen} aria-label={`Open ${photo.title} larger`}>
         <span className="polaroid" style={polaroidTilt(index)}>
-          <span className={`pin pin--${PIN_COLORS[index % PIN_COLORS.length]} pin--${pin}`} aria-hidden="true" />
           <span className={`polaroid__photo ${ratio !== "standard" ? `polaroid__photo--${ratio}` : ""}`}>
             <img src={photo.thumb} alt={photo.title} loading="lazy" style={cropStyle(photo)} />
           </span>
@@ -220,7 +216,6 @@ export default function Home() {
             aria-label={`Open ${heroPhoto.title} larger`}
           >
             <span className="polaroid polaroid--hero" style={{ ["--polaroid-tilt" as string]: "-2deg" } as CSSProperties}>
-              <span className="pin pin--red pin--tl" aria-hidden="true" />
               <span className="tape-real tape-real--tr" aria-hidden="true" />
               <span className="tape-real tape-real--bl" aria-hidden="true" />
               <span className="polaroid__photo">
@@ -266,14 +261,14 @@ export default function Home() {
           <div className="editorial__spread">
             <div className="editorial__col">
               <Reveal direction="none">
-                <Shot photo={editorial[0]} index={0} ratio="standard" pin="tl" onOpen={() => open(editorial[0])} />
+                <Shot photo={editorial[0]} index={0} ratio="standard" onOpen={() => open(editorial[0])} />
               </Reveal>
               <Reveal delay={110} direction="none">
-                <Shot photo={editorial[1]} index={1} ratio="standard" pin="tl" onOpen={() => open(editorial[1])} />
+                <Shot photo={editorial[1]} index={1} ratio="standard" onOpen={() => open(editorial[1])} />
               </Reveal>
             </div>
             <Reveal delay={150} direction="up" className="editorial__tall">
-              <Shot photo={editorial[2]} index={2} ratio="portrait" pin="tr" onOpen={() => open(editorial[2])} />
+              <Shot photo={editorial[2]} index={2} ratio="portrait" onOpen={() => open(editorial[2])} />
             </Reveal>
           </div>
 
@@ -281,33 +276,33 @@ export default function Home() {
             <p className="dossier__eyebrow">Meet these cats</p>
             <div className="dossier__grid">
               {squares.map((photo, i) => (
-                <Shot key={photo.id} photo={photo} index={3 + i} ratio="square" pin={i < 2 ? "tl" : "tr"} onOpen={() => open(photo)} />
+                <Shot key={photo.id} photo={photo} index={3 + i} ratio="square" onOpen={() => open(photo)} />
               ))}
             </div>
           </Reveal>
 
           <Reveal direction="up" className="editorial__feature">
-            <Shot photo={portrait} index={5} ratio="portrait" pin="tl" onOpen={() => open(portrait)} />
+            <Shot photo={portrait} index={5} ratio="portrait" onOpen={() => open(portrait)} />
           </Reveal>
 
           <div className="editorial__spread editorial__spread--mirror">
             <div className="editorial__col">
               <Reveal direction="none">
-                <Shot photo={mirrored[0]} index={6} ratio="standard" pin="tr" onOpen={() => open(mirrored[0])} />
+                <Shot photo={mirrored[0]} index={6} ratio="standard" onOpen={() => open(mirrored[0])} />
               </Reveal>
               <Reveal delay={110} direction="none">
-                <Shot photo={mirrored[1]} index={7} ratio="standard" pin="tr" onOpen={() => open(mirrored[1])} />
+                <Shot photo={mirrored[1]} index={7} ratio="standard" onOpen={() => open(mirrored[1])} />
               </Reveal>
             </div>
             <Reveal delay={150} direction="up" className="editorial__tall">
-              <Shot photo={mirrored[2]} index={8} ratio="portrait" pin="tl" onOpen={() => open(mirrored[2])} />
+              <Shot photo={mirrored[2]} index={8} ratio="portrait" onOpen={() => open(mirrored[2])} />
             </Reveal>
           </div>
 
           <div className="editorial__triptych">
             {triptych.map((photo, i) => (
               <Reveal key={photo.id} delay={i * 110} direction="none">
-                <Shot photo={photo} index={9 + i} ratio="standard" pin={i === 2 ? "tr" : "tl"} onOpen={() => open(photo)} />
+                <Shot photo={photo} index={9 + i} ratio="standard" onOpen={() => open(photo)} />
               </Reveal>
             ))}
           </div>
