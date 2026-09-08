@@ -91,6 +91,23 @@ export function Paw({ className = "", style }: DoodleProps) {
   );
 }
 
+export function Flower({ className = "", style }: DoodleProps) {
+  return (
+    <svg className={`doodle doodle--flower ${className}`} style={style} viewBox="0 0 40 40" aria-hidden="true">
+      {[0, 72, 144, 216, 288].map((a) => (
+        <path
+          key={a}
+          className="doodle__draw"
+          style={{ animationDelay: `${120 + a * 2}ms` }}
+          d="M20 16.6 C16.8 13.4, 16.8 8.4, 20 5.2 C23.2 8.4, 23.2 13.4, 20 16.6 Z"
+          transform={`rotate(${a} 20 20)`}
+        />
+      ))}
+      <circle cx="20" cy="20" r="3" className="doodle__draw" style={{ animationDelay: "260ms" }} />
+    </svg>
+  );
+}
+
 export function Arrow({ className = "", style }: DoodleProps) {
   return (
     <svg className={`doodle doodle--arrow ${className}`} style={style} viewBox="0 0 40 40" aria-hidden="true">

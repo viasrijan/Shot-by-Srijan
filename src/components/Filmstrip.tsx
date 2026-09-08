@@ -7,6 +7,18 @@ interface FilmstripProps {
   onOpen: (photo: Photo) => void;
 }
 
+function LedStrip({ position }: { position: "top" | "bottom" }) {
+  return (
+    <div className={`led-strip led-strip--${position}`} aria-hidden="true">
+      <div className="led-strip__diodes">
+        {Array.from({ length: 38 }).map((_, i) => (
+          <span key={i} className="led-dot" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
   const doubled = [...photos, ...photos];
   const played = useRef(false);
@@ -18,7 +30,7 @@ export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
     return () => window.clearTimeout(t);
   }, []);
 
-  const tilt = (i: number) => (i % 2 === 0 ? "-1.6deg" : "1.4deg");
+  const tilt = (i: number) => (i % 2 === 0 ? "1.6deg" : "-1.4deg");
 
   return (
     <section className="filmstrip filmstrip--marquee" aria-label="Full-width moving slideshow">
