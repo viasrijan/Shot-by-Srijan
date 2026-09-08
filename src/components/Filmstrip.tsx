@@ -23,6 +23,8 @@ export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
   return (
     <section className="filmstrip filmstrip--marquee" aria-label="Full-width moving slideshow">
       <div className="filmstrip__viewport filmstrip__viewport--marquee">
+        <LedStrip position="top" />
+        <LedStrip position="bottom" />
         <div className="filmstrip__marquee">
           {doubled.map((photo, i) => (
             <button

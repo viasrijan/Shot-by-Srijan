@@ -4,7 +4,7 @@ import { photos, type Photo } from "../data/photos";
 import Lightbox from "../components/Lightbox";
 import Reveal from "../components/Reveal";
 import Filmstrip from "../components/Filmstrip";
-import { Camera, Flower, Sparkle, Star, type DoodleProps } from "../components/Doodles";
+import { Camera, Flower, Sparkle, Star, Heart, Spiral, SunBurst, Paw, Arrow, type DoodleProps } from "../components/Doodles";
 import { playShutter } from "../components/sfx";
 
 const heroPhoto = photos[0];
@@ -33,29 +33,42 @@ const CAPTIONS: Record<string, string> = {
 };
 
 // Magazine spreads — two stacked horizontal frames beside one tall vertical.
+// Includes the tiny supervisor (dsc03153) integrated with the cats.
 const editorial: Photo[] = [photos[2], photos[3], photos[10]];
 const mirrored: Photo[] = [photos[13], photos[0], photos[11]];
-const squares: Photo[] = [photos[4], photos[5], photos[6], photos[9]];
-const portrait = photos[12];
-const triptych: Photo[] = [photos[7], photos[9], photos[15]];
+const squares: Photo[] = [photos[4], photos[5], photos[12], photos[6], photos[9]];
+const portrait = photos[7];
+const triptych: Photo[] = [photos[8], photos[14], photos[15]];
 
 // Bare prints — pins removed.
 
-// Doodles drift only across the gallery section (the scatter layer lives
-// inside .editorial now), floating slowly with a pen draw-in on each stroke.
+// Doodles drift across the gallery section with alive animations.
 const SCATTERED: { C: ComponentType<DoodleProps>; left: string; top: string; size: number; tilt: string }[] = [
-  { C: Star, left: "4%", top: "3%", size: 48, tilt: "-14deg" },
-  { C: Sparkle, left: "22%", top: "2%", size: 22, tilt: "10deg" },
-  { C: Flower, left: "72%", top: "4%", size: 44, tilt: "16deg" },
-  { C: Star, left: "90%", top: "13%", size: 36, tilt: "-8deg" },
-  { C: Camera, left: "7%", top: "25%", size: 56, tilt: "8deg" },
-  { C: Sparkle, left: "45%", top: "21%", size: 20, tilt: "-12deg" },
-  { C: Flower, left: "90%", top: "33%", size: 48, tilt: "-6deg" },
-  { C: Star, left: "5%", top: "45%", size: 42, tilt: "12deg" },
-  { C: Sparkle, left: "55%", top: "52%", size: 24, tilt: "14deg" },
-  { C: Camera, left: "24%", top: "63%", size: 52, tilt: "-16deg" },
-  { C: Flower, left: "78%", top: "74%", size: 40, tilt: "6deg" },
-  { C: Sparkle, left: "12%", top: "88%", size: 20, tilt: "-10deg" },
+  { C: Star, left: "3%", top: "2%", size: 48, tilt: "-14deg" },
+  { C: Heart, left: "18%", top: "1%", size: 34, tilt: "12deg" },
+  { C: Sparkle, left: "34%", top: "3%", size: 22, tilt: "10deg" },
+  { C: Spiral, left: "55%", top: "2%", size: 38, tilt: "-18deg" },
+  { C: Flower, left: "72%", top: "3%", size: 44, tilt: "16deg" },
+  { C: SunBurst, left: "88%", top: "8%", size: 42, tilt: "8deg" },
+  { C: Paw, left: "4%", top: "18%", size: 36, tilt: "-6deg" },
+  { C: Camera, left: "8%", top: "28%", size: 56, tilt: "8deg" },
+  { C: Arrow, left: "28%", top: "24%", size: 40, tilt: "15deg" },
+  { C: Sparkle, left: "45%", top: "20%", size: 20, tilt: "-12deg" },
+  { C: Heart, left: "68%", top: "22%", size: 32, tilt: "14deg" },
+  { C: Paw, left: "91%", top: "29%", size: 38, tilt: "10deg" },
+  { C: Star, left: "3%", top: "42%", size: 42, tilt: "12deg" },
+  { C: Spiral, left: "20%", top: "46%", size: 36, tilt: "8deg" },
+  { C: SunBurst, left: "52%", top: "49%", size: 44, tilt: "-10deg" },
+  { C: Flower, left: "89%", top: "47%", size: 48, tilt: "-6deg" },
+  { C: Arrow, left: "8%", top: "61%", size: 42, tilt: "-15deg" },
+  { C: Paw, left: "31%", top: "64%", size: 38, tilt: "12deg" },
+  { C: Sparkle, left: "58%", top: "61%", size: 24, tilt: "14deg" },
+  { C: Heart, left: "76%", top: "66%", size: 34, tilt: "-8deg" },
+  { C: Camera, left: "22%", top: "78%", size: 52, tilt: "-16deg" },
+  { C: Star, left: "42%", top: "81%", size: 40, tilt: "10deg" },
+  { C: Flower, left: "78%", top: "83%", size: 40, tilt: "6deg" },
+  { C: Sparkle, left: "12%", top: "92%", size: 20, tilt: "-10deg" },
+  { C: Spiral, left: "91%", top: "91%", size: 38, tilt: "14deg" },
 ];
 
 function ScatterDoodles() {
@@ -96,9 +109,11 @@ function cropStyle(photo: Photo): CSSProperties | undefined {
   return position ? ({ objectPosition: position } as CSSProperties) : undefined;
 }
 
-// Captions read as sentences — the first letter of each line is capitalised.
+// Captions read as sentences — first letter capitalized, and break lines after commas.
 function capitalizeCaption(text: string): string {
-  return text.replace(/(^|\n)([a-z])/g, (_match, head: string, ch: string) => head + ch.toUpperCase());
+  // Break after comma if not already broken, and capitalize sentence starts
+  const formatted = text.replace(/,\s+/g, ",\n");
+  return formatted.replace(/(^|\n)([a-z])/g, (_match, head: string, ch: string) => head + ch.toUpperCase());
 }
 
 function captionFor(photo: Photo): string {

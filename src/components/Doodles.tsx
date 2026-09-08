@@ -52,19 +52,49 @@ export function Sparkle({ className = "", style }: DoodleProps) {
   );
 }
 
-export function Flower({ className = "", style }: DoodleProps) {
+export function Heart({ className = "", style }: DoodleProps) {
   return (
-    <svg className={`doodle doodle--flower ${className}`} style={style} viewBox="0 0 40 40" aria-hidden="true">
-      {[0, 72, 144, 216, 288].map((a) => (
-        <path
-          key={a}
-          className="doodle__draw"
-          style={{ animationDelay: `${120 + a * 2}ms` }}
-          d="M20 16.6 C16.8 13.4, 16.8 8.4, 20 5.2 C23.2 8.4, 23.2 13.4, 20 16.6 Z"
-          transform={`rotate(${a} 20 20)`}
-        />
+    <svg className={`doodle doodle--heart ${className}`} style={style} viewBox="0 0 36 36" aria-hidden="true">
+      <path className="doodle__draw" d="M18 30 C18 30, 6 21, 6 12 C6 7.5, 9.5 4, 14 4 C16.5 4, 18 5.5, 18 5.5 C18 5.5, 19.5 4, 22 4 C26.5 4, 30 7.5, 30 12 C30 21, 18 30, 18 30 Z" />
+    </svg>
+  );
+}
+
+export function Spiral({ className = "", style }: DoodleProps) {
+  return (
+    <svg className={`doodle doodle--spiral ${className}`} style={style} viewBox="0 0 40 40" aria-hidden="true">
+      <path className="doodle__draw" d="M20 20 m0 -12 a12 12 0 0 1 12 12 a8 8 0 0 1 -8 8 a4 4 0 0 1 -4 -4 a2 2 0 0 1 2 -2" />
+    </svg>
+  );
+}
+
+export function SunBurst({ className = "", style }: DoodleProps) {
+  return (
+    <svg className={`doodle doodle--sunburst ${className}`} style={style} viewBox="0 0 44 44" aria-hidden="true">
+      <circle cx="22" cy="22" r="6" className="doodle__draw" />
+      {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
+        <line key={a} x1="22" y1="6" x2="22" y2="10" className="doodle__draw" transform={`rotate(${a} 22 22)`} />
       ))}
-      <circle cx="20" cy="20" r="3" className="doodle__draw" style={{ animationDelay: "260ms" }} />
+    </svg>
+  );
+}
+
+export function Paw({ className = "", style }: DoodleProps) {
+  return (
+    <svg className={`doodle doodle--paw ${className}`} style={style} viewBox="0 0 40 40" aria-hidden="true">
+      <circle cx="20" cy="24" r="7" className="doodle__draw" />
+      <circle cx="13" cy="15" r="3" className="doodle__draw" />
+      <circle cx="27" cy="15" r="3" className="doodle__draw" />
+      <circle cx="17" cy="10" r="2.5" className="doodle__draw" />
+      <circle cx="23" cy="10" r="2.5" className="doodle__draw" />
+    </svg>
+  );
+}
+
+export function Arrow({ className = "", style }: DoodleProps) {
+  return (
+    <svg className={`doodle doodle--arrow ${className}`} style={style} viewBox="0 0 40 40" aria-hidden="true">
+      <path className="doodle__draw" d="M6 20 L34 20 M24 10 L34 20 L24 30" />
     </svg>
   );
 }
