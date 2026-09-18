@@ -33,14 +33,11 @@ const CAPTIONS: Record<string, string> = {
 };
 
 // Magazine spreads — two stacked horizontal frames beside one tall vertical.
-// Includes the tiny supervisor (dsc03153) integrated with the cats.
 const editorial: Photo[] = [photos[2], photos[3], photos[10]];
 const mirrored: Photo[] = [photos[13], photos[0], photos[11]];
 const squares: Photo[] = [photos[4], photos[5], photos[12], photos[6], photos[9]];
 const portrait = photos[7];
 const triptych: Photo[] = [photos[8], photos[14], photos[15]];
-
-// Bare prints — pins removed.
 
 // Doodles drift across the gallery section with alive animations.
 const SCATTERED: { C: ComponentType<DoodleProps>; left: string; top: string; size: number; tilt: string }[] = [
@@ -111,7 +108,6 @@ function cropStyle(photo: Photo): CSSProperties | undefined {
 
 // Captions read as sentences — first letter capitalized, and break lines after commas.
 function capitalizeCaption(text: string): string {
-  // Break after comma if not already broken, and capitalize sentence starts
   const formatted = text.replace(/,\s+/g, ",\n");
   return formatted.replace(/(^|\n)([a-z])/g, (_match, head: string, ch: string) => head + ch.toUpperCase());
 }
@@ -120,7 +116,6 @@ function captionFor(photo: Photo): string {
   return capitalizeCaption(CAPTIONS[photo.id] ?? photo.category);
 }
 
-// Captions may carry a manual "\n" to break a line (e.g. after the comma).
 function renderCaption(text: string) {
   return text.split("\n").map((line, i, lines) => (
     <span key={i}>
@@ -130,27 +125,66 @@ function renderCaption(text: string) {
   ));
 }
 
-function BrushTitle({ prefix, main }: { prefix: string; main: string }) {
-  let letterIndex = 0;
-  const letters = (word: string, keyBase: string, small: boolean) => (
-    <span key={keyBase} className={`brush-word${small ? " brush-word--small" : ""}`} aria-hidden="true">
-      {word.split("").map((ch, i) => (
-        <span key={`${keyBase}-${i}`} className="brush-letter" style={{ animationDelay: `${200 + letterIndex++ * 55}ms` }}>
-          {ch}
-        </span>
-      ))}
-    </span>
-  );
+// Elegant Handdrawn Sketch Title with Graphite Lead & Flowing Ink
+function SketchTitle({ prefix, main }: { prefix: string; main: string }) {
+  let charIdx = 0;
   return (
-    <h1 className="hero__title" aria-label={`${prefix} ${main}`}>
-      {prefix.split(" ").map((word, i, words) => (
-        <span key={`prefix-${i}`}>
-          {letters(word, `prefix-${i}`, true)}
-          {i < words.length - 1 ? " " : ""}
+    <div className="hero__sketch-container" aria-label={`${prefix} ${main}`}>
+      <h1 className="hero__title hero__title--sketch">
+        <span className="sketch-word sketch-word--prefix">
+          {prefix.split("").map((ch, i) => {
+            const idx = charIdx++;
+            return (
+              <span
+                key={`pref-${i}`}
+                className={`sketch-char${ch === " " ? " sketch-char--space" : ""}`}
+                style={{ "--char-i": idx } as CSSProperties}
+              >
+                {ch !== " " && <span className="sketch-char__pencil" aria-hidden="true">{ch}</span>}
+                <span className="sketch-char__ink">{ch}</span>
+              </span>
+            );
+          })}
+        </span>{" "}
+        <span className="sketch-word sketch-word--main">
+          {main.split("").map((ch, i) => {
+            const idx = charIdx++;
+            return (
+              <span
+                key={`main-${i}`}
+                className="sketch-char"
+                style={{ "--char-i": idx } as CSSProperties}
+              >
+                <span className="sketch-char__pencil" aria-hidden="true">{ch}</span>
+                <span className="sketch-char__ink">{ch}</span>
+              </span>
+            );
+          })}
         </span>
-      ))}{" "}
-      {letters(main, "main", false)}
-    </h1>
+      </h1>
+
+      {/* Hand-drawn sketch flourish underline scribble */}
+      <svg
+        className="hero__sketch-underline"
+        viewBox="0 0 340 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path
+          d="M 6,18 C 55,24 115,10 170,20 C 220,28 270,12 328,15"
+          className="sketch-path sketch-path--guide"
+        />
+        <path
+          d="M 12,20 C 65,26 125,12 185,22 C 235,30 280,14 332,17"
+          className="sketch-path sketch-path--lead"
+        />
+        <path
+          d="M 235,24 C 270,16 298,20 330,16"
+          className="sketch-path sketch-path--ink"
+        />
+      </svg>
+    </div>
   );
 }
 
@@ -232,7 +266,7 @@ export default function Home() {
               }}
               aria-label="Shot by Srijan — back to homepage"
             >
-              <BrushTitle prefix="Shot by" main="Srijan" />
+              <SketchTitle prefix="Shot by" main="Srijan" />
             </a>
             <div className="hero__bottom hero__bottom--center">
               <p>A journal of frames that I&apos;ve captured</p>

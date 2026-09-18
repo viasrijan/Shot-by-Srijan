@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Photo } from "../data/photos";
 import { playShutter } from "./sfx";
-import LedStrip, { type LedMode, type LedSpeed } from "./LedStrip";
+import StringLights, { type LightMode } from "./StringLights";
 
 interface FilmstripProps {
   photos: Photo[];
@@ -12,29 +12,16 @@ export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
   const doubled = [...photos, ...photos];
   const played = useRef(false);
 
-  // Synchronized LED strip settings (Amazon-style RGB strip controls)
-  const [ledMode, setLedMode] = useState<LedMode>("flash");
-  const [ledSpeed, setLedSpeed] = useState<LedSpeed>("normal");
+  // Synchronized Garland String Lights
+  const [lightMode, setLightMode] = useState<LightMode>("twinkle");
 
-  const cycleMode = useCallback(() => {
-    const modes: LedMode[] = ["flash", "rainbow", "pulse", "warm"];
-    setLedMode((curr) => {
-      if (curr === "off") return "flash";
-      const nextIdx = (modes.indexOf(curr) + 1) % modes.length;
-      return modes[nextIdx];
+  const toggleMode = useCallback(() => {
+    setLightMode((curr) => {
+      if (curr === "twinkle") return "chase";
+      if (curr === "chase") return "glow";
+      if (curr === "glow") return "off";
+      return "twinkle";
     });
-  }, []);
-
-  const cycleSpeed = useCallback(() => {
-    const speeds: LedSpeed[] = ["chill", "normal", "fast"];
-    setLedSpeed((curr) => {
-      const nextIdx = (speeds.indexOf(curr) + 1) % speeds.length;
-      return speeds[nextIdx];
-    });
-  }, []);
-
-  const togglePower = useCallback(() => {
-    setLedMode((curr) => (curr === "off" ? "flash" : "off"));
   }, []);
 
   useEffect(() => {
@@ -49,15 +36,12 @@ export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
   return (
     <section className="filmstrip filmstrip--marquee" aria-label="Full-width moving slideshow">
       <div className="filmstrip__viewport filmstrip__viewport--marquee">
-        {/* Realistic Amazon-style Animated Flashing LED Strip (Above Slider Images) */}
-        <LedStrip
+        {/* Fairy/Garland String Lights (Above Slider Images) */}
+        <StringLights
           position="top"
-          mode={ledMode}
-          speed={ledSpeed}
-          showController={true}
-          onCycleMode={cycleMode}
-          onCycleSpeed={cycleSpeed}
-          onTogglePower={togglePower}
+          mode={lightMode}
+          onToggleMode={toggleMode}
+          showControl={true}
         />
 
         <div className="filmstrip__marquee">
@@ -80,11 +64,10 @@ export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
           ))}
         </div>
 
-        {/* Realistic Amazon-style Animated Flashing LED Strip (Below Slider Images) */}
-        <LedStrip
+        {/* Fairy/Garland String Lights (Below Slider Images) */}
+        <StringLights
           position="bottom"
-          mode={ledMode}
-          speed={ledSpeed}
+          mode={lightMode}
         />
       </div>
     </section>
