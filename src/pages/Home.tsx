@@ -4,7 +4,23 @@ import { photos, type Photo } from "../data/photos";
 import Lightbox from "../components/Lightbox";
 import Reveal from "../components/Reveal";
 import Filmstrip from "../components/Filmstrip";
-import { Camera, Flower, Sparkle, Star, Heart, Spiral, SunBurst, Paw, Arrow, type DoodleProps } from "../components/Doodles";
+import {
+  Camera,
+  Flower,
+  Sparkle,
+  Star,
+  Heart,
+  Spiral,
+  SunBurst,
+  Paw,
+  Arrow,
+  Aperture,
+  FilmRoll,
+  Viewfinder,
+  BotanicalLeaf,
+  Shine,
+  type DoodleProps,
+} from "../components/Doodles";
 import { playShutter } from "../components/sfx";
 
 const heroPhoto = photos[0];
@@ -32,55 +48,61 @@ const CAPTIONS: Record<string, string> = {
   "dsc07039": "look up more often",
 };
 
-// Magazine spreads — two stacked horizontal frames beside one tall vertical.
+// Balanced editorial spreads — every image is part of a multi-frame grouping (no lone frames!)
 const editorial: Photo[] = [photos[2], photos[3], photos[10]];
+const cats: Photo[] = [photos[4], photos[5], photos[12], photos[6], photos[9]];
+const duo: Photo[] = [photos[7], photos[8]];
 const mirrored: Photo[] = [photos[13], photos[0], photos[11]];
-const squares: Photo[] = [photos[4], photos[5], photos[12], photos[6], photos[9]];
-const portrait = photos[7];
-const triptych: Photo[] = [photos[8], photos[14], photos[15]];
+const triptych: Photo[] = [photos[1], photos[14], photos[15]];
 
-// Doodles drift across the gallery section with alive animations.
-const SCATTERED: { C: ComponentType<DoodleProps>; left: string; top: string; size: number; tilt: string }[] = [
-  { C: Star, left: "3%", top: "2%", size: 48, tilt: "-14deg" },
-  { C: Heart, left: "18%", top: "1%", size: 34, tilt: "12deg" },
-  { C: Sparkle, left: "34%", top: "3%", size: 22, tilt: "10deg" },
-  { C: Spiral, left: "55%", top: "2%", size: 38, tilt: "-18deg" },
-  { C: Flower, left: "72%", top: "3%", size: 44, tilt: "16deg" },
-  { C: SunBurst, left: "88%", top: "8%", size: 42, tilt: "8deg" },
-  { C: Paw, left: "4%", top: "18%", size: 36, tilt: "-6deg" },
-  { C: Camera, left: "8%", top: "28%", size: 56, tilt: "8deg" },
-  { C: Arrow, left: "28%", top: "24%", size: 40, tilt: "15deg" },
-  { C: Sparkle, left: "45%", top: "20%", size: 20, tilt: "-12deg" },
-  { C: Heart, left: "68%", top: "22%", size: 32, tilt: "14deg" },
-  { C: Paw, left: "91%", top: "29%", size: 38, tilt: "10deg" },
-  { C: Star, left: "3%", top: "42%", size: 42, tilt: "12deg" },
-  { C: Spiral, left: "20%", top: "46%", size: 36, tilt: "8deg" },
-  { C: SunBurst, left: "52%", top: "49%", size: 44, tilt: "-10deg" },
-  { C: Flower, left: "89%", top: "47%", size: 48, tilt: "-6deg" },
-  { C: Arrow, left: "8%", top: "61%", size: 42, tilt: "-15deg" },
-  { C: Paw, left: "31%", top: "64%", size: 38, tilt: "12deg" },
-  { C: Sparkle, left: "58%", top: "61%", size: 24, tilt: "14deg" },
-  { C: Heart, left: "76%", top: "66%", size: 34, tilt: "-8deg" },
-  { C: Camera, left: "22%", top: "78%", size: 52, tilt: "-16deg" },
-  { C: Star, left: "42%", top: "81%", size: 40, tilt: "10deg" },
-  { C: Flower, left: "78%", top: "83%", size: 40, tilt: "6deg" },
-  { C: Sparkle, left: "12%", top: "92%", size: 20, tilt: "-10deg" },
-  { C: Spiral, left: "91%", top: "91%", size: 38, tilt: "14deg" },
+// Elegant scattered doodles with animated effects across the gallery
+const SCATTERED: { C: ComponentType<DoodleProps>; left: string; top: string; size: number; tilt: string; animClass?: string }[] = [
+  { C: Star, left: "2%", top: "1.5%", size: 44, tilt: "-12deg", animClass: "doodle--float" },
+  { C: Aperture, left: "12%", top: "2.8%", size: 38, tilt: "0deg", animClass: "doodle--spin-slow" },
+  { C: BotanicalLeaf, left: "26%", top: "1%", size: 40, tilt: "14deg", animClass: "doodle--sway" },
+  { C: Sparkle, left: "42%", top: "2.5%", size: 22, tilt: "8deg", animClass: "doodle--pulse" },
+  { C: FilmRoll, left: "62%", top: "1.8%", size: 42, tilt: "-10deg", animClass: "doodle--float-rev" },
+  { C: Flower, left: "78%", top: "2%", size: 42, tilt: "16deg", animClass: "doodle--sway" },
+  { C: Shine, left: "92%", top: "3%", size: 36, tilt: "12deg", animClass: "doodle--pulse" },
+  { C: Paw, left: "3%", top: "16%", size: 34, tilt: "-6deg", animClass: "doodle--float" },
+  { C: Camera, left: "8%", top: "26%", size: 54, tilt: "8deg", animClass: "doodle--float" },
+  { C: Viewfinder, left: "28%", top: "22%", size: 36, tilt: "0deg", animClass: "doodle--pulse" },
+  { C: Arrow, left: "46%", top: "21%", size: 38, tilt: "18deg", animClass: "doodle--sway" },
+  { C: Heart, left: "68%", top: "23%", size: 32, tilt: "14deg", animClass: "doodle--pulse" },
+  { C: BotanicalLeaf, left: "88%", top: "24%", size: 42, tilt: "-16deg", animClass: "doodle--sway" },
+  { C: Paw, left: "93%", top: "31%", size: 36, tilt: "10deg", animClass: "doodle--float" },
+  { C: Star, left: "2%", top: "41%", size: 40, tilt: "12deg", animClass: "doodle--pulse" },
+  { C: FilmRoll, left: "18%", top: "45%", size: 40, tilt: "-8deg", animClass: "doodle--float-rev" },
+  { C: SunBurst, left: "52%", top: "48%", size: 44, tilt: "-10deg", animClass: "doodle--spin-slow" },
+  { C: Shine, left: "70%", top: "46%", size: 34, tilt: "0deg", animClass: "doodle--pulse" },
+  { C: Flower, left: "90%", top: "47%", size: 46, tilt: "-6deg", animClass: "doodle--sway" },
+  { C: Aperture, left: "6%", top: "60%", size: 40, tilt: "0deg", animClass: "doodle--spin-slow" },
+  { C: Paw, left: "30%", top: "63%", size: 36, tilt: "12deg", animClass: "doodle--float" },
+  { C: Sparkle, left: "56%", top: "61%", size: 24, tilt: "14deg", animClass: "doodle--pulse" },
+  { C: BotanicalLeaf, left: "72%", top: "63%", size: 40, tilt: "16deg", animClass: "doodle--sway" },
+  { C: Heart, left: "88%", top: "66%", size: 32, tilt: "-8deg", animClass: "doodle--pulse" },
+  { C: Camera, left: "14%", top: "78%", size: 50, tilt: "-14deg", animClass: "doodle--float" },
+  { C: Viewfinder, left: "38%", top: "80%", size: 34, tilt: "0deg", animClass: "doodle--pulse" },
+  { C: Star, left: "58%", top: "82%", size: 38, tilt: "10deg", animClass: "doodle--pulse" },
+  { C: Flower, left: "80%", top: "83%", size: 40, tilt: "6deg", animClass: "doodle--sway" },
+  { C: Shine, left: "10%", top: "93%", size: 32, tilt: "8deg", animClass: "doodle--pulse" },
+  { C: FilmRoll, left: "48%", top: "94%", size: 38, tilt: "12deg", animClass: "doodle--float-rev" },
+  { C: Spiral, left: "91%", top: "92%", size: 36, tilt: "14deg", animClass: "doodle--sway" },
 ];
 
 function ScatterDoodles() {
   return (
     <div className="scatter" aria-hidden="true">
-      {SCATTERED.map(({ C, left, top, size, tilt }, i) => (
+      {SCATTERED.map(({ C, left, top, size, tilt, animClass = "" }, i) => (
         <C
           key={i}
-          className="scatter__doodle"
+          className={`scatter__doodle ${animClass}`}
           style={{
             left,
             top,
             width: size,
             height: C === Camera ? Math.round(size * 0.75) : size,
-            animationDelay: `${700 + i * 180}ms`,
+            animationDelay: `${400 + i * 140}ms`,
             ["--doodle-tilt" as string]: tilt,
           } as CSSProperties}
         />
@@ -125,66 +147,13 @@ function renderCaption(text: string) {
   ));
 }
 
-// Elegant Handdrawn Sketch Title with Graphite Lead & Flowing Ink
-function SketchTitle({ prefix, main }: { prefix: string; main: string }) {
-  let charIdx = 0;
+// Modern, Elegant Sans-Serif Title without underline
+function SansTitle({ prefix, main }: { prefix: string; main: string }) {
   return (
-    <div className="hero__sketch-container" aria-label={`${prefix} ${main}`}>
-      <h1 className="hero__title hero__title--sketch">
-        <span className="sketch-word sketch-word--prefix">
-          {prefix.split("").map((ch, i) => {
-            const idx = charIdx++;
-            return (
-              <span
-                key={`pref-${i}`}
-                className={`sketch-char${ch === " " ? " sketch-char--space" : ""}`}
-                style={{ "--char-i": idx } as CSSProperties}
-              >
-                {ch !== " " && <span className="sketch-char__pencil" aria-hidden="true">{ch}</span>}
-                <span className="sketch-char__ink">{ch}</span>
-              </span>
-            );
-          })}
-        </span>{" "}
-        <span className="sketch-word sketch-word--main">
-          {main.split("").map((ch, i) => {
-            const idx = charIdx++;
-            return (
-              <span
-                key={`main-${i}`}
-                className="sketch-char"
-                style={{ "--char-i": idx } as CSSProperties}
-              >
-                <span className="sketch-char__pencil" aria-hidden="true">{ch}</span>
-                <span className="sketch-char__ink">{ch}</span>
-              </span>
-            );
-          })}
-        </span>
-      </h1>
-
-      {/* Hand-drawn sketch flourish underline scribble */}
-      <svg
-        className="hero__sketch-underline"
-        viewBox="0 0 340 32"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-      >
-        <path
-          d="M 6,18 C 55,24 115,10 170,20 C 220,28 270,12 328,15"
-          className="sketch-path sketch-path--guide"
-        />
-        <path
-          d="M 12,20 C 65,26 125,12 185,22 C 235,30 280,14 332,17"
-          className="sketch-path sketch-path--lead"
-        />
-        <path
-          d="M 235,24 C 270,16 298,20 330,16"
-          className="sketch-path sketch-path--ink"
-        />
-      </svg>
-    </div>
+    <h1 className="hero__title hero__title--sans" aria-label={`${prefix} ${main}`}>
+      <span className="hero__title-prefix">{prefix}</span>
+      <span className="hero__title-main">{main}</span>
+    </h1>
   );
 }
 
@@ -194,12 +163,14 @@ function Shot({
   ratio,
   onOpen,
   className = "",
+  compact = false,
 }: {
   photo: Photo;
   index: number;
   ratio: "standard" | "portrait" | "square";
   onOpen: () => void;
   className?: string;
+  compact?: boolean;
 }) {
   return (
     <figure className={`shot ${photo.orientation === "portrait" ? "shot--portrait" : ""} ${className}`}>
@@ -208,7 +179,9 @@ function Shot({
           <span className={`polaroid__photo ${ratio !== "standard" ? `polaroid__photo--${ratio}` : ""}`}>
             <img src={photo.thumb} alt={photo.title} loading="lazy" style={cropStyle(photo)} />
           </span>
-          <span className="polaroid__caption">{renderCaption(captionFor(photo))}</span>
+          <span className={`polaroid__caption${compact ? " polaroid__caption--compact" : ""}`}>
+            {renderCaption(captionFor(photo))}
+          </span>
         </span>
       </button>
     </figure>
@@ -245,6 +218,14 @@ export default function Home() {
             onClick={clickHero}
             aria-label={`Open ${heroPhoto.title} larger`}
           >
+            {/* Viewfinder corner brackets framing hero shot */}
+            <div className="hero__viewfinder" aria-hidden="true">
+              <span className="hero__vf hero__vf--tl" />
+              <span className="hero__vf hero__vf--tr" />
+              <span className="hero__vf hero__vf--br" />
+              <span className="hero__vf hero__vf--bl" />
+            </div>
+
             <span className="polaroid polaroid--hero" style={{ ["--polaroid-tilt" as string]: "-2deg" } as CSSProperties}>
               <span className="tape-real tape-real--tr" aria-hidden="true" />
               <span className="tape-real tape-real--bl" aria-hidden="true" />
@@ -266,7 +247,7 @@ export default function Home() {
               }}
               aria-label="Shot by Srijan — back to homepage"
             >
-              <SketchTitle prefix="Shot by" main="Srijan" />
+              <SansTitle prefix="Shot by" main="Srijan" />
             </a>
             <div className="hero__bottom hero__bottom--center">
               <p>A journal of frames that I&apos;ve captured</p>
@@ -288,6 +269,7 @@ export default function Home() {
       <section className="editorial" aria-label="Selected frames">
         <ScatterDoodles />
         <div className="editorial__inner">
+          {/* Spread 1: Editorial trio */}
           <div className="editorial__spread">
             <div className="editorial__col">
               <Reveal direction="none">
@@ -302,37 +284,46 @@ export default function Home() {
             </Reveal>
           </div>
 
+          {/* Dossier: Meet these cats (smaller typography, tighter layout) */}
           <Reveal direction="none" className="dossier">
             <p className="dossier__eyebrow">Meet these cats</p>
             <div className="dossier__grid">
-              {squares.map((photo, i) => (
-                <Shot key={photo.id} photo={photo} index={3 + i} ratio="square" onOpen={() => open(photo)} />
+              {cats.map((photo, i) => (
+                <Shot key={photo.id} photo={photo} index={3 + i} ratio="square" compact={true} onOpen={() => open(photo)} />
               ))}
             </div>
           </Reveal>
 
-          <Reveal direction="up" className="editorial__feature">
-            <Shot photo={portrait} index={5} ratio="portrait" onOpen={() => open(portrait)} />
-          </Reveal>
-
-          <div className="editorial__spread editorial__spread--mirror">
-            <div className="editorial__col">
-              <Reveal direction="none">
-                <Shot photo={mirrored[0]} index={6} ratio="standard" onOpen={() => open(mirrored[0])} />
-              </Reveal>
-              <Reveal delay={110} direction="none">
-                <Shot photo={mirrored[1]} index={7} ratio="standard" onOpen={() => open(mirrored[1])} />
-              </Reveal>
-            </div>
-            <Reveal delay={150} direction="up" className="editorial__tall">
-              <Shot photo={mirrored[2]} index={8} ratio="portrait" onOpen={() => open(mirrored[2])} />
+          {/* Feature Duo: Portrait paired with landscape (No lone frames!) */}
+          <div className="editorial__duo">
+            <Reveal direction="none">
+              <Shot photo={duo[0]} index={5} ratio="portrait" onOpen={() => open(duo[0])} />
+            </Reveal>
+            <Reveal delay={120} direction="none">
+              <Shot photo={duo[1]} index={6} ratio="standard" onOpen={() => open(duo[1])} />
             </Reveal>
           </div>
 
+          {/* Spread 3: Mirrored trio */}
+          <div className="editorial__spread editorial__spread--mirror">
+            <div className="editorial__col">
+              <Reveal direction="none">
+                <Shot photo={mirrored[0]} index={7} ratio="standard" onOpen={() => open(mirrored[0])} />
+              </Reveal>
+              <Reveal delay={110} direction="none">
+                <Shot photo={mirrored[1]} index={8} ratio="standard" onOpen={() => open(mirrored[1])} />
+              </Reveal>
+            </div>
+            <Reveal delay={150} direction="up" className="editorial__tall">
+              <Shot photo={mirrored[2]} index={9} ratio="portrait" onOpen={() => open(mirrored[2])} />
+            </Reveal>
+          </div>
+
+          {/* Spread 4: Balanced Triptych */}
           <div className="editorial__triptych">
             {triptych.map((photo, i) => (
               <Reveal key={photo.id} delay={i * 110} direction="none">
-                <Shot photo={photo} index={9 + i} ratio="standard" onOpen={() => open(photo)} />
+                <Shot photo={photo} index={10 + i} ratio="standard" onOpen={() => open(photo)} />
               </Reveal>
             ))}
           </div>

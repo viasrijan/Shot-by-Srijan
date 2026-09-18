@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 
-export type LightColor = "red" | "green" | "amber" | "blue";
+export type LightColor = "red" | "amber" | "green" | "blue" | "cyan";
 export type LightMode = "twinkle" | "chase" | "glow" | "off";
 
 interface StringLightsProps {
@@ -10,24 +10,11 @@ interface StringLightsProps {
   showControl?: boolean;
 }
 
-// Sequence matching the user's reference photo
+// Sequence of vivid micro fairy jewel colors
 const COLOR_SEQUENCE: LightColor[] = [
-  "red",
-  "green",
-  "amber",
-  "blue",
-  "green",
-  "amber",
-  "red",
-  "blue",
-  "amber",
-  "green",
-  "red",
-  "blue",
-  "amber",
-  "green",
-  "blue",
-  "red",
+  "amber", "blue", "green", "red", "amber", "cyan", "green", "red",
+  "blue", "amber", "green", "red", "cyan", "amber", "blue", "green",
+  "red", "amber", "cyan", "green", "blue", "amber", "red", "green"
 ];
 
 export default function StringLights({
@@ -52,108 +39,126 @@ export default function StringLights({
     }
   };
 
+  // Randomized, crooked, tangled wire drops with long tails
   const bulbs = useMemo(() => {
-    return COLOR_SEQUENCE.map((color, idx) => ({
-      id: idx,
-      color,
-      delay: (idx * 0.18).toFixed(2),
-      twinkleDelay: ((idx * 0.37) % 2.1).toFixed(2),
-      sagOffset: Math.sin((idx / (COLOR_SEQUENCE.length - 1)) * Math.PI * 4) * 4,
-    }));
+    return COLOR_SEQUENCE.map((color, idx) => {
+      // Varied long tail lengths (20px to 46px) and crooked tail tilts
+      const tailLengths = [32, 44, 26, 40, 36, 48, 28, 42, 34, 46, 24, 38];
+      const tailAngles = [-12, 14, -6, 18, -16, 8, -10, 16, -14, 10, -8, 12];
+      const wireOffsets = [8, 16, 6, 20, 12, 22, 9, 18, 11, 24, 7, 19];
+
+      const tailLen = tailLengths[idx % tailLengths.length];
+      const tailRot = tailAngles[idx % tailAngles.length];
+      const wireDrop = wireOffsets[idx % wireOffsets.length];
+
+      return {
+        id: idx,
+        color,
+        tailLen,
+        tailRot,
+        wireDrop,
+        delay: ((idx * 0.16) % 1.8).toFixed(2),
+        twinkleDelay: ((idx * 0.43) % 2.4).toFixed(2),
+        speed: (1.4 + (idx % 4) * 0.35).toFixed(2),
+      };
+    });
   }, []);
 
   return (
     <div
-      className={`string-lights string-lights--${position} string-lights--mode-${activeMode}`}
+      className={`string-lights string-lights--tangled string-lights--${position} string-lights--mode-${activeMode}`}
       role="region"
-      aria-label={`${position === "top" ? "Upper" : "Lower"} festive garland string lights`}
+      aria-label={`${position === "top" ? "Upper" : "Lower"} micro tangled fairy string lights`}
     >
-      {/* SVG Twisted Drooping Wire Cable */}
+      {/* SVG Crooked, Kinked, Organic Tangled Cable */}
       <svg
-        className="string-lights__wire-svg"
-        viewBox="0 0 1600 65"
+        className="string-lights__tangled-wire-svg"
+        viewBox="0 0 1600 70"
         preserveAspectRatio="none"
         aria-hidden="true"
       >
         <defs>
-          <linearGradient id={`wire-grad-${position}`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#101511" />
-            <stop offset="25%" stopColor="#1a231c" />
-            <stop offset="50%" stopColor="#121813" />
-            <stop offset="75%" stopColor="#1b241d" />
-            <stop offset="100%" stopColor="#0f1410" />
+          <linearGradient id={`tangled-wire-${position}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#0a0d0b" />
+            <stop offset="25%" stopColor="#171e18" />
+            <stop offset="50%" stopColor="#0d110e" />
+            <stop offset="75%" stopColor="#182019" />
+            <stop offset="100%" stopColor="#0b0e0c" />
           </linearGradient>
-          <filter id={`wire-shadow-${position}`} x="-5%" y="-20%" width="110%" height="150%">
-            <feDropShadow dx="0" dy="2" stdDeviation="1.5" floodColor="#000000" floodOpacity="0.75" />
-          </filter>
         </defs>
 
-        {/* Primary twisted strand */}
+        {/* Primary thin crooked wire with kinks and irregular dips */}
         <path
-          d="M 0,22 Q 100,38 200,24 Q 300,40 400,23 Q 500,39 600,24 Q 700,41 800,23 Q 900,40 1000,24 Q 1100,39 1200,23 Q 1300,41 1400,24 Q 1500,38 1600,22"
+          d="M 0,14 Q 45,26 95,16 T 190,28 T 285,12 T 380,32 T 480,18 T 575,34 T 670,16 T 765,30 T 860,14 T 960,33 T 1055,17 T 1150,31 T 1245,15 T 1345,34 T 1440,16 T 1535,29 T 1600,15"
           fill="none"
-          stroke={`url(#wire-grad-${position})`}
-          strokeWidth="3.4"
+          stroke={`url(#tangled-wire-${position})`}
+          strokeWidth="1.3"
           strokeLinecap="round"
-          filter={`url(#wire-shadow-${position})`}
         />
 
-        {/* Intertwined secondary copper/insulation twist */}
+        {/* Secondary overlapping twisted wire strand with crossover loops */}
         <path
-          d="M 0,21 Q 100,36 200,23 Q 300,38 400,22 Q 500,37 600,23 Q 700,39 800,22 Q 900,38 1000,23 Q 1100,37 1200,22 Q 1300,39 1400,23 Q 1500,36 1600,21"
+          d="M 0,16 Q 50,11 100,24 T 195,14 T 290,30 T 385,15 T 485,31 T 580,14 T 675,33 T 770,17 T 865,29 T 965,15 T 1060,32 T 1155,16 T 1250,30 T 1350,18 T 1445,32 T 1540,15 T 1600,22"
           fill="none"
-          stroke="#0b0e0c"
-          strokeWidth="1.6"
-          strokeDasharray="8 6"
+          stroke="#070908"
+          strokeWidth="1.1"
           strokeLinecap="round"
-          opacity="0.9"
+          opacity="0.85"
         />
       </svg>
 
-      {/* Bulbs & Sockets track */}
+      {/* Micro Bulbs with Long Slender Wire Tails */}
       <div className="string-lights__garland" aria-hidden="true">
         {bulbs.map((b) => (
           <div
             key={b.id}
-            className={`garland-node garland-node--${b.color}`}
+            className={`micro-node micro-node--${b.color}`}
             style={{
               "--bulb-delay": `${b.delay}s`,
               "--twinkle-delay": `${b.twinkleDelay}s`,
-              transform: `translateY(${b.sagOffset}px)`,
+              "--twinkle-dur": `${b.speed}s`,
+              marginTop: `${b.wireDrop}px`,
             } as React.CSSProperties}
           >
-            {/* Ambient wall bloom (soft colorful halo on the wall like in the photo) */}
-            <div className={`bulb-ambient bulb-ambient--${b.color}`} />
+            {/* Long Crooked Wire Tail dropping down from main cord */}
+            <div
+              className="micro-tail"
+              style={{
+                height: `${b.tailLen}px`,
+                transform: `rotate(${b.tailRot}deg)`,
+                transformOrigin: "top center",
+              }}
+            >
+              {/* Slender crooked wire strand */}
+              <div className="micro-tail__wire" />
 
-            {/* Dark molded socket collar */}
-            <div className="socket-collar">
-              <div className="socket-collar__clip" />
-              <div className="socket-collar__body">
-                <span className="socket-collar__ridge" />
-                <span className="socket-collar__ridge" />
+              {/* Slim heat-shrink tube collar */}
+              <div className="micro-stem">
+                <div className="micro-stem__band" />
               </div>
-            </div>
 
-            {/* Translucent capsule bulb matching the reference image */}
-            <div className={`capsule-bulb capsule-bulb--${b.color}`}>
-              {/* Glossy specular reflection highlight */}
-              <div className="capsule-bulb__highlight" />
-              {/* White-hot diode filament emitter */}
-              <div className="capsule-bulb__filament" />
-              {/* Translucent colored outer casing */}
-              <div className="capsule-bulb__glass" />
+              {/* Tiny Micro-Rice LED Bulb */}
+              <div className={`micro-bulb micro-bulb--${b.color}`}>
+                {/* Intense point filament */}
+                <div className="micro-bulb__core" />
+                {/* Translucent glass dome */}
+                <div className="micro-bulb__glass" />
+              </div>
+
+              {/* Delicate colored surface glow pool */}
+              <div className={`micro-glow micro-glow--${b.color}`} />
             </div>
           </div>
         ))}
       </div>
 
-      {/* Discreet Mode Controller */}
+      {/* Discreet Mode Switch Button */}
       {showControl && (
         <button
           type="button"
           className="string-lights__ctrl"
           onClick={cycleMode}
-          title={`String Lights: ${activeMode.toUpperCase()} (Click to change mode)`}
+          title={`Fairy Lights: ${activeMode.toUpperCase()} (Click to toggle)`}
           aria-label={`Toggle fairy lights mode, currently ${activeMode}`}
         >
           <span className="string-lights__ctrl-dot" />

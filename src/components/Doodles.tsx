@@ -115,3 +115,67 @@ export function Arrow({ className = "", style }: DoodleProps) {
     </svg>
   );
 }
+
+export function Aperture({ className = "", style }: DoodleProps) {
+  return (
+    <svg className={`doodle doodle--aperture ${className}`} style={style} viewBox="0 0 44 44" aria-hidden="true">
+      <circle cx="22" cy="22" r="18" className="doodle__draw" />
+      <line x1="22" y1="4" x2="34" y2="18" className="doodle__draw doodle__draw--soft" />
+      <line x1="38" y1="14" x2="36" y2="30" className="doodle__draw doodle__draw--soft" />
+      <line x1="40" y1="26" x2="26" y2="38" className="doodle__draw doodle__draw--soft" />
+      <line x1="26" y1="40" x2="12" y2="34" className="doodle__draw doodle__draw--soft" />
+      <line x1="6" y1="30" x2="8" y2="14" className="doodle__draw doodle__draw--soft" />
+      <line x1="4" y1="18" x2="18" y2="6" className="doodle__draw doodle__draw--soft" />
+    </svg>
+  );
+}
+
+export function FilmRoll({ className = "", style }: DoodleProps) {
+  return (
+    <svg className={`doodle doodle--filmroll ${className}`} style={style} viewBox="0 0 48 38" aria-hidden="true">
+      <rect x="4" y="6" width="22" height="26" rx="2" className="doodle__draw" />
+      <line x1="4" y1="10" x2="26" y2="10" className="doodle__draw doodle__draw--soft" />
+      <line x1="4" y1="28" x2="26" y2="28" className="doodle__draw doodle__draw--soft" />
+      <circle cx="15" cy="4" r="2.5" className="doodle__draw" />
+      <circle cx="15" cy="34" r="2.5" className="doodle__draw" />
+      <path d="M 26,14 Q 38,12 44,18 L 44,24 Q 38,20 26,22" className="doodle__draw" />
+      <circle cx="34" cy="16" r="1" className="doodle__dot" />
+      <circle cx="40" cy="18" r="1" className="doodle__dot" />
+    </svg>
+  );
+}
+
+export function Viewfinder({ className = "", style }: DoodleProps) {
+  return (
+    <svg className={`doodle doodle--viewfinder ${className}`} style={style} viewBox="0 0 36 36" aria-hidden="true">
+      <path d="M 4,12 L 4,4 L 12,4" className="doodle__draw" />
+      <path d="M 24,4 L 32,4 L 32,12" className="doodle__draw" />
+      <path d="M 32,24 L 32,32 L 24,32" className="doodle__draw" />
+      <path d="M 12,32 L 4,32 L 4,24" className="doodle__draw" />
+      <line x1="16" y1="18" x2="20" y2="18" className="doodle__draw doodle__draw--soft" />
+      <line x1="18" y1="16" x2="18" y2="20" className="doodle__draw doodle__draw--soft" />
+    </svg>
+  );
+}
+
+export function BotanicalLeaf({ className = "", style }: DoodleProps) {
+  return (
+    <svg className={`doodle doodle--botanical ${className}`} style={style} viewBox="0 0 40 44" aria-hidden="true">
+      <path d="M 6,38 Q 18,24 28,6" className="doodle__draw" />
+      <path d="M 14,30 Q 18,22 10,18 Q 18,24 14,30" className="doodle__draw doodle__draw--soft" />
+      <path d="M 20,22 Q 28,18 26,10 Q 22,18 20,22" className="doodle__draw doodle__draw--soft" />
+      <path d="M 24,14 Q 34,14 36,8 Q 28,10 24,14" className="doodle__draw doodle__draw--soft" />
+    </svg>
+  );
+}
+
+export function Shine({ className = "", style }: DoodleProps) {
+  return (
+    <svg className={`doodle doodle--shine ${className}`} style={style} viewBox="0 0 32 32" aria-hidden="true">
+      <line x1="16" y1="2" x2="16" y2="30" className="doodle__draw" />
+      <line x1="2" y1="16" x2="30" y2="16" className="doodle__draw" />
+      <line x1="6" y1="6" x2="26" y2="26" className="doodle__draw doodle__draw--soft" />
+      <line x1="26" y1="6" x2="6" y2="26" className="doodle__draw doodle__draw--soft" />
+    </svg>
+  );
+}

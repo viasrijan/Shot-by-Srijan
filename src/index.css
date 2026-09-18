@@ -2,7 +2,7 @@
 
 @theme {
   --font-sans: "Space Grotesk", Arial, sans-serif;
-  --font-logo: "Homemade Apple", "La Belle Aurore", cursive, sans-serif;
+  --font-logo: "Space Grotesk", Arial, sans-serif;
 }
 
 :root { color-scheme: dark; --bg: #0a0a0c; --fg: #f2f0ea; --muted: #98979e; --line: rgba(242, 240, 234, .14); --line-strong: rgba(242, 240, 234, .28); --panel: #121215; }
@@ -40,9 +40,8 @@ main { position: relative; z-index: 1; }
 .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(30px, 4vw, 64px); align-items: center; min-height: max(650px, 82vh); padding: 142px clamp(28px, 6.9vw, 104px) clamp(55px, 6.9vw, 104px); max-width: 1610px; margin: 0 auto; }
 .hero .reveal { width: 100%; }
 .hero__eyebrow { margin: 0 0 clamp(28px, 4vw, 52px); color: var(--muted); }
-.hero h1 { margin: 0; font-family: var(--font-logo); font-weight: 700; letter-spacing: -.05em; line-height: .98; }
-.hero__underline { display: block; width: min(30vw, 270px); margin-top: 22px; color: var(--fg); opacity: .7; }
-.hero__underline path { fill: none; stroke: currentColor; stroke-width: 1.6; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+.hero h1 { margin: 0; font-family: var(--font-sans); font-weight: 700; letter-spacing: -.03em; line-height: 1.0; }
+.hero__underline { display: none !important; }
 .hero__bottom { display: flex; max-width: 1040px; align-items: flex-end; justify-content: space-between; gap: 28px; margin-top: clamp(28px, 4vw, 48px); padding-top: 18px; border-top: 1px solid var(--line); }
 .hero__bottom p { max-width: 350px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
 .hero__bottom span { color: var(--muted); white-space: nowrap; }
@@ -50,20 +49,32 @@ main { position: relative; z-index: 1; }
 /* Text sits left, image right. */
 .hero--split > .reveal:first-child { order: 2; }
 .hero--split > .reveal:last-child { order: 1; }
-/* Uniform vertical rhythm: title → underline → divider line → tagline → icons all share one gap */
+/* Uniform vertical rhythm: title → divider line → tagline → icons all share one gap */
 .hero__split { display: flex; flex-direction: column; gap: var(--hero-stack-gap, 24px); position: relative; z-index: 1; }
 .hero__brand { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; gap: clamp(16px, 2vw, 26px); color: inherit; text-decoration: none; background: none; border: 0; cursor: pointer; }
 .hero__brand .hero__mark svg { width: clamp(55px, 5.3vw, 83px); height: clamp(55px, 5.3vw, 83px); }
 .hero__brand .hero__title { margin: 0; font-size: clamp(51px, 5.4vw, 93px); width: auto; max-width: 100%; display: block; }
 .hero__media { position: relative; }
+/* Viewfinder framing marks around the hero polaroid */
+.hero__viewfinder { position: absolute; inset: -14px; pointer-events: none; z-index: 5; transition: inset 350ms cubic-bezier(0.22, 1, 0.36, 1); }
+.hero__media:hover .hero__viewfinder { inset: -20px; }
+.hero__vf { position: absolute; width: 18px; height: 18px; border-color: rgba(255, 255, 255, 0.45); border-style: solid; transition: border-color 300ms ease; }
+.hero__media:hover .hero__vf { border-color: rgba(255, 255, 255, 0.9); }
+.hero__vf--tl { top: 0; left: 0; border-width: 1.5px 0 0 1.5px; }
+.hero__vf--tr { top: 0; right: 0; border-width: 1.5px 1.5px 0 0; }
+.hero__vf--br { bottom: 0; right: 0; border-width: 0 1.5px 1.5px 0; }
+.hero__vf--bl { bottom: 0; left: 0; border-width: 0 0 1.5px 1.5px; }
+
 .filmstrip--marquee { position: relative; }
 .filmstrip__viewport--marquee, .filmstrip__heading { position: relative; z-index: 1; }
 .hero__toplogo { grid-column: 1 / -1; justify-self: center; display: inline-flex; color: var(--fg); position: relative; z-index: 1; }
 .hero__toplogo svg { width: clamp(44px, 4vw, 64px); height: clamp(44px, 4vw, 64px); display: block; }
 .hero__mark { display: inline-flex; flex: none; color: var(--fg); }
 .hero__mark svg { width: clamp(88px, 8vw, 128px); height: clamp(88px, 8vw, 128px); }
-.hero__title { margin: 0 auto; font-family: var(--font-logo); font-weight: 700; letter-spacing: .02em; line-height: 1.04; font-size: clamp(51px, 5.4vw, 93px); width: max-content; max-width: 100%; color: var(--fg); text-align: center; }
-.hero__title > span:not(:last-child) { margin-right: .24em; }
+.hero__title { margin: 0 auto; font-family: var(--font-sans); font-weight: 700; letter-spacing: -.03em; line-height: 1.02; font-size: clamp(48px, 5.2vw, 86px); width: max-content; max-width: 100%; color: var(--fg); text-align: center; }
+.hero__title--sans { display: flex; align-items: baseline; justify-content: center; gap: 0.28em; flex-wrap: wrap; }
+.hero__title-prefix { font-family: var(--font-sans); font-weight: 300; opacity: 0.85; letter-spacing: -0.01em; }
+.hero__title-main { font-family: var(--font-sans); font-weight: 700; letter-spacing: -0.03em; }
 .hero__socials { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 0; }
 .hero__socials a { display: inline-flex; width: 64px; height: 64px; align-items: center; justify-content: center; transition: transform 300ms ease, opacity 300ms ease; }
 .hero__socials a:hover { transform: translateY(-2px); opacity: .85; }
@@ -78,9 +89,9 @@ main { position: relative; z-index: 1; }
 .hero__caption em { font-style: italic; font-family: Georgia, serif; font-size: 13px; color: var(--muted); }
 
 /* Polaroid prints — glossy white-to-light-grey plastic finish, soft inner shadows,
-   with a handwritten caption strip. Each print leans its own way; hover straightens it. */
-.polaroid { position: relative; display: block; width: 85%; margin: 0 auto; padding: 4.5% 4.5% 0; background: linear-gradient(180deg, #cfcfcd 0%, #e3e3e1 30%, #f3f3f1 58%, #ffffff 85%, #f5f5f3 100%); border-radius: 4px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), inset 0 -1px 2px rgba(0, 0, 0, .12), inset 0 10px 18px rgba(255, 255, 255, .38), inset 0 -14px 26px rgba(0, 0, 0, .07), 0 18px 44px rgba(0, 0, 0, .5), 0 2px 8px rgba(0, 0, 0, .35); transform: rotate(var(--polaroid-tilt, 0deg)); transition: transform 450ms cubic-bezier(.22, 1, .36, 1); }
-.polaroid::after { content: ""; position: absolute; inset: 0; z-index: 0; border-radius: inherit; background: linear-gradient(115deg, rgba(255, 255, 255, .5) 0%, rgba(255, 255, 255, .12) 28%, rgba(255, 255, 255, 0) 46%, rgba(0, 0, 0, .045) 78%, rgba(0, 0, 0, .08) 100%); pointer-events: none; }
+   with a handwritten caption strip. Sharp 0px corners. */
+.polaroid { position: relative; display: block; width: 85%; margin: 0 auto; padding: 4.5% 4.5% 0; background: linear-gradient(180deg, #cfcfcd 0%, #e3e3e1 30%, #f3f3f1 58%, #ffffff 85%, #f5f5f3 100%); border-radius: 0 !important; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), inset 0 -1px 2px rgba(0, 0, 0, .12), inset 0 10px 18px rgba(255, 255, 255, .38), inset 0 -14px 26px rgba(0, 0, 0, .07), 0 18px 44px rgba(0, 0, 0, .5), 0 2px 8px rgba(0, 0, 0, .35); transform: rotate(var(--polaroid-tilt, 0deg)); transition: transform 450ms cubic-bezier(.22, 1, .36, 1); }
+.polaroid::after { content: ""; position: absolute; inset: 0; z-index: 0; border-radius: 0 !important; background: linear-gradient(115deg, rgba(255, 255, 255, .5) 0%, rgba(255, 255, 255, .12) 28%, rgba(255, 255, 255, 0) 46%, rgba(0, 0, 0, .045) 78%, rgba(0, 0, 0, .08) 100%); pointer-events: none; }
 
 /* Prints sit bare — pins removed. */
 .shot__button:hover .polaroid, .hero__media:hover .polaroid--hero { transform: rotate(0deg) translateY(-4px); }
@@ -138,7 +149,23 @@ main { position: relative; z-index: 1; }
 .filmstrip__dot { width: 7px; height: 7px; border: 0; padding: 0; border-radius: 50%; background: var(--line); cursor: pointer; transition: background 300ms ease, transform 300ms ease; }
 .filmstrip__dot--active { background: var(--fg); transform: scale(1.25); }
 
-/* Image shots with frames */
+/* Image shots with frames — sharp 0px corners across the board */
+.shot,
+.shot__button,
+.polaroid,
+.polaroid::after,
+.polaroid__photo,
+.polaroid__photo img,
+.filmstrip__cell,
+.filmstrip__imgwrap,
+.filmstrip__imgwrap img,
+.filmstrip__frame,
+.filmstrip__feature,
+.filmstrip__feature img,
+.dossier {
+  border-radius: 0 !important;
+}
+
 .shot { position: relative; margin: 0; }
 .shot__button { position: relative; display: block; width: 100%; border: 0; padding: 0; background: none; cursor: zoom-in; overflow: visible; }
 .shot--portrait { width: 100%; }
@@ -149,9 +176,20 @@ main { position: relative; z-index: 1; }
 .editorial__spread { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(240px, 1fr); gap: clamp(16px, 2.2vw, 32px); align-items: start; }
 .editorial__col { display: flex; flex-direction: column; gap: clamp(24px, 3.5vw, 48px); }
 .editorial__tall { margin-top: clamp(12px, 2vw, 32px); }
+
+/* Dossier: Meet these cats with smaller, refined typography */
 .dossier { border: 1px solid var(--line); padding: clamp(24px, 3.5vw, 44px) clamp(20px, 3.5vw, 40px) clamp(28px, 4vw, 48px); }
-.dossier__grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); align-items: start; }
-.dossier__grid .shot:nth-child(even) { margin-top: 24px; }
+.dossier__eyebrow { margin: 0 0 18px; font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.dossier__grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 24px); align-items: start; }
+.dossier__grid .shot:nth-child(even) { margin-top: 20px; }
+.polaroid__caption--compact { font-size: clamp(11px, 1.05vw, 14px) !important; padding: 2.2% 1.8% 3.2% !important; line-height: 1.15 !important; }
+
+/* Editorial Duo Spread: Balanced pair so no frame sits alone */
+.editorial__duo { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(0, 1.45fr); gap: clamp(16px, 2.4vw, 36px); align-items: center; max-width: 1080px; margin: 0 auto; width: 100%; }
+@media (max-width: 768px) {
+  .editorial__duo { grid-template-columns: 1fr; }
+}
+
 .editorial__feature { margin: 0 auto; max-width: 440px; }
 .editorial__triptych { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2.2vw, 32px); align-items: start; }
 
@@ -192,14 +230,40 @@ main { position: relative; z-index: 1; }
 @keyframes orb-float { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(80px, -56px, 0) scale(1.14); } }
 .hero--split > .orbs, .filmstrip > .orbs, .band > .orbs { position: absolute; }
 
-/* Doodles scattered across the site background — gentle fade-in, then a slow drift. */
+/* Doodles scattered across the site background — gentle fade-in, then creative animated effects */
 .doodle { position: absolute; color: var(--fg); opacity: 0; pointer-events: none; overflow: visible; }
 .scatter { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
-.scatter__doodle { opacity: 0; animation: doodle-fadein 2.6s ease forwards, doodle-drift 16s ease-in-out 3s infinite alternate; }
-@keyframes doodle-fadein { from { opacity: 0; transform: translateY(8px) rotate(var(--doodle-tilt, 0deg)); } to { opacity: .8; transform: translateY(0) rotate(var(--doodle-tilt, 0deg)); } }
-@keyframes doodle-drift { from { transform: translateY(-7px) rotate(var(--doodle-tilt, 0deg)); } to { transform: translateY(9px) rotate(var(--doodle-tilt, 0deg)); } }
-@keyframes doodle-fadein { from { opacity: 0; transform: translateY(8px) rotate(var(--doodle-tilt, 0deg)); } to { opacity: .8; transform: translateY(0) rotate(var(--doodle-tilt, 0deg)); } }
-@keyframes doodle-drift { from { transform: translateY(-5px) rotate(var(--doodle-tilt, 0deg)); } to { transform: translateY(7px) rotate(var(--doodle-tilt, 0deg)); } }
+.scatter__doodle { opacity: 0; animation: doodle-fadein 2.2s ease forwards; }
+
+/* Interactive & Ambient Animated Effects for Doodles */
+.doodle--float { animation: doodle-fadein 2s ease forwards, doodle-float 5.5s ease-in-out infinite alternate !important; }
+.doodle--float-rev { animation: doodle-fadein 2s ease forwards, doodle-float-rev 6.5s ease-in-out infinite alternate !important; }
+.doodle--spin-slow { animation: doodle-fadein 2s ease forwards, doodle-spin 32s linear infinite !important; transform-origin: center center; }
+.doodle--sway { animation: doodle-fadein 2s ease forwards, doodle-sway 5s ease-in-out infinite alternate !important; transform-origin: top center; }
+.doodle--pulse { animation: doodle-fadein 2s ease forwards, doodle-pulse 4s ease-in-out infinite alternate !important; }
+
+@keyframes doodle-fadein { from { opacity: 0; transform: translateY(10px) rotate(var(--doodle-tilt, 0deg)); } to { opacity: .82; transform: translateY(0) rotate(var(--doodle-tilt, 0deg)); } }
+@keyframes doodle-float {
+  0% { transform: translateY(0px) rotate(var(--doodle-tilt, 0deg)); }
+  100% { transform: translateY(-11px) rotate(calc(var(--doodle-tilt, 0deg) + 4deg)); }
+}
+@keyframes doodle-float-rev {
+  0% { transform: translateY(0px) rotate(var(--doodle-tilt, 0deg)); }
+  100% { transform: translateY(10px) rotate(calc(var(--doodle-tilt, 0deg) - 4deg)); }
+}
+@keyframes doodle-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes doodle-sway {
+  0% { transform: rotate(calc(var(--doodle-tilt, 0deg) - 7deg)); }
+  100% { transform: rotate(calc(var(--doodle-tilt, 0deg) + 7deg)); }
+}
+@keyframes doodle-pulse {
+  0% { transform: scale(0.92) rotate(var(--doodle-tilt, 0deg)); opacity: 0.55; }
+  100% { transform: scale(1.1) rotate(var(--doodle-tilt, 0deg)); opacity: 0.95; }
+}
+
 .shot { position: relative; }
 .filmstrip__cell { position: relative; }
 
@@ -218,6 +282,16 @@ main { position: relative; z-index: 1; }
 .doodle--camera { width: 58px; height: 44px; }
 .doodle--sparkle { width: 22px; height: 22px; }
 .doodle--flower { width: 34px; height: 34px; }
+.doodle--aperture { width: 38px; height: 38px; }
+.doodle--filmroll { width: 42px; height: 42px; }
+.doodle--viewfinder { width: 36px; height: 36px; }
+.doodle--leaf { width: 40px; height: 40px; }
+.doodle--shine { width: 36px; height: 36px; }
+.doodle--sunburst { width: 42px; height: 42px; }
+.doodle--paw { width: 36px; height: 36px; }
+.doodle--heart { width: 32px; height: 32px; }
+.doodle--spiral { width: 36px; height: 36px; }
+.doodle--arrow { width: 38px; height: 38px; }
 @keyframes doodle-draw { to { stroke-dashoffset: 0; } }
 
 
@@ -311,152 +385,10 @@ main { position: relative; z-index: 1; }
   .site-footer span { display: none; }
 }
 
-/* ==========================================================================
-   Elegant Handdrawn Sketch Title ("Shot by Srijan")
-   ========================================================================== */
-
-.hero__sketch-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  width: 100%;
-}
-
-.hero__title--sketch {
-  font-family: var(--font-logo);
-  font-weight: 400;
-  font-size: clamp(38px, 4.4vw, 72px);
-  line-height: 1.35;
-  color: var(--fg);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: baseline;
-  gap: 0.18em;
-  margin: 0;
-  position: relative;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-}
-
-.sketch-word {
-  display: inline-flex;
-  white-space: nowrap;
-}
-
-.sketch-char {
-  position: relative;
-  display: inline-block;
-}
-
-.sketch-char--space {
-  width: 0.28em;
-}
-
-/* Faint graphite pencil draft lines that sketch out the letter ahead of the ink */
-.sketch-char__pencil {
-  position: absolute;
-  top: 0.5px;
-  left: 0.5px;
-  color: rgba(242, 240, 234, 0.38);
-  font-family: inherit;
-  pointer-events: none;
-  opacity: 0;
-  transform: translate(-1px, 1px) scale(0.98);
-  filter: blur(0.3px);
-  animation: sketch-pencil-draft 550ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  animation-delay: calc(150ms + var(--char-i, 0) * 45ms);
-}
-
-/* Fluid ink letter flowing into place with pencil texture */
-.sketch-char__ink {
-  position: relative;
-  display: inline-block;
-  color: var(--fg);
-  opacity: 0;
-  transform: translateY(3px);
-  animation: sketch-ink-flow 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  animation-delay: calc(280ms + var(--char-i, 0) * 45ms);
-  text-shadow: 0 0 1px rgba(242, 240, 234, 0.35);
-}
-
-@keyframes sketch-pencil-draft {
-  0% {
-    opacity: 0;
-    transform: translate(-3px, 2px) scale(0.92);
-  }
-  40% {
-    opacity: 0.7;
-    transform: translate(1px, -1px) scale(1.02);
-  }
-  100% {
-    opacity: 0.28;
-    transform: translate(0.5px, 0.5px) scale(1);
-  }
-}
-
-@keyframes sketch-ink-flow {
-  0% {
-    opacity: 0;
-    transform: translateY(4px) scale(0.96);
-    filter: blur(2px);
-  }
-  60% {
-    opacity: 0.9;
-    filter: blur(0px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0px);
-  }
-}
-
-/* Hand-drawn sketch flourish underline */
-.hero__sketch-underline {
-  width: min(300px, 75vw);
-  height: 28px;
-  margin-top: 2px;
-  overflow: visible;
-}
-
-.sketch-path {
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 400;
-  stroke-dashoffset: 400;
-  animation: sketch-path-draw 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-.sketch-path--guide {
-  stroke: rgba(242, 240, 234, 0.22);
-  stroke-width: 1.2;
-  animation-delay: 850ms;
-}
-
-.sketch-path--lead {
-  stroke: var(--fg);
-  stroke-width: 1.8;
-  opacity: 0.85;
-  animation-delay: 980ms;
-}
-
-.sketch-path--ink {
-  stroke: var(--fg);
-  stroke-width: 2.2;
-  opacity: 0.95;
-  animation-delay: 1120ms;
-}
-
-@keyframes sketch-path-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
 
 /* ==========================================================================
-   Festive Fairy / Garland String Lights (Exact Match to User Reference Photo)
+   Micro Tangled Fairy String Lights (Exact Match to User Reference Photo)
+   Features: Thinner wires (1.2px), long crooked tails/leads, tiny micro-rice LEDs
    ========================================================================== */
 
 .string-lights {
@@ -466,30 +398,34 @@ main { position: relative; z-index: 1; }
   z-index: 10;
   user-select: none;
   overflow: visible;
-  height: 60px;
+}
+
+.string-lights--tangled {
+  height: 64px;
 }
 
 .string-lights--top {
-  margin-bottom: -12px;
+  margin-bottom: -18px;
 }
 
 .string-lights--bottom {
-  margin-top: -6px;
+  margin-top: -12px;
 }
 
-/* SVG Twisted Drooping Wire Cable */
-.string-lights__wire-svg {
+/* Crooked tangled wire SVG strand */
+.string-lights__tangled-wire-svg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 38px;
+  height: 52px;
   pointer-events: none;
   z-index: 1;
   overflow: visible;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9));
 }
 
-/* Bulbs & Sockets Garland Track */
+/* Bulbs & long tail garland track */
 .string-lights__garland {
   position: relative;
   z-index: 2;
@@ -497,258 +433,260 @@ main { position: relative; z-index: 1; }
   justify-content: space-around;
   align-items: flex-start;
   width: 100%;
-  padding: 0 clamp(8px, 2.5vw, 24px);
+  padding: 0 clamp(8px, 2.5vw, 28px);
   box-sizing: border-box;
 }
 
-/* Individual Garland Node: socket + bulb + glow */
-.garland-node {
+/* Individual node with long drooping crooked tail */
+.micro-node {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
-  width: 24px;
+  width: 16px;
   cursor: pointer;
-  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: auto;
+  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.garland-node:hover {
-  transform: scale(1.15) !important;
+.micro-node:hover {
+  transform: scale(1.25) translateY(2px) !important;
+  z-index: 20;
 }
 
-/* Dark Molded Plastic Socket Collar */
-.socket-collar {
+/* Long irregular wire drop tail */
+.micro-tail {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 2;
-  margin-top: 14px;
-}
-
-/* Clip grasping the wire */
-.socket-collar__clip {
-  width: 7px;
-  height: 4px;
-  background: #0f1411;
-  border-radius: 2px 2px 0 0;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
-}
-
-/* Socket cylinder with molded ridges */
-.socket-collar__body {
-  position: relative;
-  width: 10px;
-  height: 13px;
-  background: linear-gradient(90deg, #0d120e 0%, #1e261f 40%, #171d18 70%, #0c100d 100%);
-  border: 0.5px solid #252e26;
-  border-radius: 1px 1px 2px 2px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.85);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  padding: 2px 0;
-}
-
-.socket-collar__ridge {
-  display: block;
   width: 100%;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
 }
 
-/* Capsule / Bullet Mini Bulb */
-.capsule-bulb {
-  position: relative;
-  width: 12px;
-  height: 22px;
-  margin-top: -1px;
-  border-radius: 2px 2px 6px 6px;
-  z-index: 3;
-  overflow: visible;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-}
-
-/* Glossy glass reflection on the left */
-.capsule-bulb__highlight {
+/* Slender wire strand */
+.micro-tail__wire {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 2px;
-  height: 15px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.35) 60%, transparent 100%);
-  border-radius: 2px;
-  z-index: 4;
-  pointer-events: none;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1.2px;
+  height: 100%;
+  background: linear-gradient(180deg, #090c0a 0%, #172019 50%, #0c110e 100%);
+  box-shadow: 0.5px 0 1px rgba(0, 0, 0, 0.8);
 }
 
-/* White-hot inner filament / diode pinpoint */
-.capsule-bulb__filament {
+/* Slim heat-shrink tube collar */
+.micro-stem {
   position: absolute;
-  top: 5px;
+  bottom: 6px;
   left: 50%;
   transform: translateX(-50%);
   width: 4px;
-  height: 4px;
-  background: #ffffff;
-  border-radius: 50%;
-  z-index: 3;
-  box-shadow: 0 0 6px #ffffff, 0 0 12px #ffffff;
+  height: 8px;
+  background: linear-gradient(90deg, #090d0a 0%, #1a241c 45%, #080c09 100%);
+  border-radius: 1px;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  z-index: 2;
 }
 
-/* Glass casing gradient */
-.capsule-bulb__glass {
+.micro-stem__band {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* Tiny Micro-Rice LED Bulb (~5.5px wide, small grain shape) */
+.micro-bulb {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5.5px;
+  height: 8px;
+  border-radius: 2px 2px 4px 4px;
+  z-index: 3;
+  overflow: visible;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Intense point filament diode */
+.micro-bulb__core {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 50%;
+  z-index: 4;
+  box-shadow: 0 0 3px #ffffff, 0 0 6px #ffffff;
+}
+
+/* Translucent glass dome */
+.micro-bulb__glass {
   position: absolute;
   inset: 0;
   border-radius: inherit;
   z-index: 2;
 }
 
-/* =================== Bulb Colors (Matching Exact User Reference Photo) =================== */
+/* =================== Bulb Colors (Exact to Reference Photo) =================== */
 
 /* RED BULB */
-.garland-node--red .capsule-bulb {
-  background: radial-gradient(circle at 50% 35%, #ffffff 0%, #ff4d5a 25%, #ff1744 65%, #b70024 100%);
-  box-shadow: 0 0 10px #ff1744, 0 0 22px rgba(255, 23, 68, 0.85);
+.micro-node--red .micro-bulb {
+  background: radial-gradient(circle at 50% 30%, #fff1f2 0%, #ff4d5a 25%, #ef4444 65%, #991b1b 100%);
+  box-shadow: 0 0 6px #ef4444, 0 0 14px rgba(239, 68, 68, 0.95), 0 0 24px rgba(239, 68, 68, 0.5);
 }
-.bulb-ambient--red {
-  background: radial-gradient(circle, rgba(255, 23, 68, 0.7) 0%, rgba(255, 23, 68, 0.28) 50%, transparent 75%);
+.micro-glow--red {
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.85) 0%, rgba(239, 68, 68, 0.28) 50%, transparent 75%);
 }
 
 /* GREEN BULB */
-.garland-node--green .capsule-bulb {
-  background: radial-gradient(circle at 50% 35%, #ffffff 0%, #69f0ae 25%, #00e676 65%, #008744 100%);
-  box-shadow: 0 0 10px #00e676, 0 0 22px rgba(0, 230, 118, 0.85);
+.micro-node--green .micro-bulb {
+  background: radial-gradient(circle at 50% 30%, #f0fff4 0%, #34d399 25%, #059669 65%, #064e3b 100%);
+  box-shadow: 0 0 6px #10b981, 0 0 14px rgba(16, 185, 129, 0.95), 0 0 24px rgba(16, 185, 129, 0.5);
 }
-.bulb-ambient--green {
-  background: radial-gradient(circle, rgba(0, 230, 118, 0.7) 0%, rgba(0, 230, 118, 0.28) 50%, transparent 75%);
+.micro-glow--green {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.85) 0%, rgba(16, 185, 129, 0.28) 50%, transparent 75%);
 }
 
 /* AMBER / WARM GOLD BULB */
-.garland-node--amber .capsule-bulb {
-  background: radial-gradient(circle at 50% 35%, #ffffff 0%, #ffd54f 25%, #ffab00 65%, #c66900 100%);
-  box-shadow: 0 0 10px #ffab00, 0 0 22px rgba(255, 171, 0, 0.85);
+.micro-node--amber .micro-bulb {
+  background: radial-gradient(circle at 50% 30%, #fffdf0 0%, #fbbf24 25%, #f59e0b 65%, #b45309 100%);
+  box-shadow: 0 0 6px #f59e0b, 0 0 14px rgba(245, 158, 11, 0.95), 0 0 24px rgba(245, 158, 11, 0.5);
 }
-.bulb-ambient--amber {
-  background: radial-gradient(circle, rgba(255, 171, 0, 0.7) 0%, rgba(255, 171, 0, 0.28) 50%, transparent 75%);
+.micro-glow--amber {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.85) 0%, rgba(245, 158, 11, 0.28) 50%, transparent 75%);
 }
 
 /* ROYAL BLUE BULB */
-.garland-node--blue .capsule-bulb {
-  background: radial-gradient(circle at 50% 35%, #ffffff 0%, #82b1ff 25%, #2979ff 65%, #004ecc 100%);
-  box-shadow: 0 0 10px #2979ff, 0 0 22px rgba(41, 121, 255, 0.85);
+.micro-node--blue .micro-bulb {
+  background: radial-gradient(circle at 50% 30%, #eff6ff 0%, #60a5fa 25%, #2563eb 65%, #1e3a8a 100%);
+  box-shadow: 0 0 6px #3b82f6, 0 0 14px rgba(59, 130, 246, 0.95), 0 0 24px rgba(59, 130, 246, 0.5);
 }
-.bulb-ambient--blue {
-  background: radial-gradient(circle, rgba(41, 121, 255, 0.7) 0%, rgba(41, 121, 255, 0.28) 50%, transparent 75%);
+.micro-glow--blue {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.85) 0%, rgba(59, 130, 246, 0.28) 50%, transparent 75%);
 }
 
-/* Soft Ambient Wall Bloom (Wall Projection behind each bulb) */
-.bulb-ambient {
+/* CYAN / ICE BULB */
+.micro-node--cyan .micro-bulb {
+  background: radial-gradient(circle at 50% 30%, #ecfeff 0%, #38bdf8 25%, #0ea5e9 65%, #0369a1 100%);
+  box-shadow: 0 0 6px #0ea5e9, 0 0 14px rgba(14, 165, 233, 0.95), 0 0 24px rgba(14, 165, 233, 0.5);
+}
+.micro-glow--cyan {
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.85) 0%, rgba(14, 165, 233, 0.28) 50%, transparent 75%);
+}
+
+/* Soft Ambient Surface Glow Pool behind each micro bulb */
+.micro-glow {
   position: absolute;
-  top: 14px;
+  bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   pointer-events: none;
   z-index: 1;
-  filter: blur(14px);
+  filter: blur(8px);
   mix-blend-mode: screen;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 /* =================== Twinkle & Flashing Animation Modes =================== */
 
 /* Mode 1: Twinkle / Flash (Default) */
-.string-lights--mode-twinkle .capsule-bulb {
-  animation: bulb-twinkle 1.8s infinite ease-in-out;
+.string-lights--mode-twinkle .micro-bulb {
+  animation: micro-twinkle var(--twinkle-dur, 1.8s) infinite ease-in-out;
   animation-delay: var(--twinkle-delay, 0s);
 }
 
-.string-lights--mode-twinkle .bulb-ambient {
-  animation: bulb-ambient-twinkle 1.8s infinite ease-in-out;
+.string-lights--mode-twinkle .micro-glow {
+  animation: micro-ambient-twinkle var(--twinkle-dur, 1.8s) infinite ease-in-out;
   animation-delay: var(--twinkle-delay, 0s);
 }
 
-@keyframes bulb-twinkle {
+@keyframes micro-twinkle {
   0%, 100% {
-    opacity: 0.65;
-    transform: scale(0.96);
+    opacity: 0.6;
+    transform: translateX(-50%) scale(0.95);
   }
   45% {
     opacity: 1;
-    transform: scale(1.05);
-    filter: brightness(1.25);
+    transform: translateX(-50%) scale(1.1);
+    filter: brightness(1.3);
   }
   75% {
-    opacity: 0.4;
-    transform: scale(0.92);
-    filter: brightness(0.85);
+    opacity: 0.35;
+    transform: translateX(-50%) scale(0.9);
+    filter: brightness(0.8);
   }
 }
 
-@keyframes bulb-ambient-twinkle {
+@keyframes micro-ambient-twinkle {
   0%, 100% {
-    opacity: 0.55;
+    opacity: 0.5;
     transform: translateX(-50%) scale(0.95);
   }
   45% {
     opacity: 0.95;
-    transform: translateX(-50%) scale(1.2);
+    transform: translateX(-50%) scale(1.25);
   }
   75% {
-    opacity: 0.3;
+    opacity: 0.25;
     transform: translateX(-50%) scale(0.85);
   }
 }
 
 /* Mode 2: Chase Wave */
-.string-lights--mode-chase .capsule-bulb {
-  animation: bulb-chase-wave 2.2s infinite ease-in-out;
+.string-lights--mode-chase .micro-bulb {
+  animation: micro-chase 2.2s infinite ease-in-out;
   animation-delay: var(--bulb-delay, 0s);
 }
 
-.string-lights--mode-chase .bulb-ambient {
-  animation: bulb-chase-wave 2.2s infinite ease-in-out;
+.string-lights--mode-chase .micro-glow {
+  animation: micro-chase 2.2s infinite ease-in-out;
   animation-delay: var(--bulb-delay, 0s);
 }
 
-@keyframes bulb-chase-wave {
+@keyframes micro-chase {
   0%, 100% {
-    opacity: 0.35;
-    filter: brightness(0.8);
+    opacity: 0.3;
+    filter: brightness(0.75);
   }
   50% {
     opacity: 1;
-    filter: brightness(1.3);
+    filter: brightness(1.35);
   }
 }
 
 /* Mode 3: Cozy Warm Glow */
-.string-lights--mode-glow .capsule-bulb {
+.string-lights--mode-glow .micro-bulb {
   opacity: 0.95;
   filter: brightness(1.05);
 }
 
-.string-lights--mode-glow .bulb-ambient {
-  opacity: 0.85;
+.string-lights--mode-glow .micro-glow {
+  opacity: 0.82;
 }
 
 /* Mode 4: Off */
-.string-lights--mode-off .capsule-bulb {
-  filter: brightness(0.2) saturate(0.4) !important;
+.string-lights--mode-off .micro-bulb {
+  filter: brightness(0.2) saturate(0.3) !important;
   box-shadow: none !important;
 }
 
-.string-lights--mode-off .capsule-bulb__filament {
+.string-lights--mode-off .micro-bulb__core {
   opacity: 0 !important;
-  box-shadow: none !important;
 }
 
-.string-lights--mode-off .bulb-ambient {
+.string-lights--mode-off .micro-glow {
   opacity: 0 !important;
 }
 
