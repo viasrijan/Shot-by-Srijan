@@ -222,9 +222,9 @@ main { position: relative; z-index: 1; }
 
 
 /* Moving marquee reel — portrait cards floating straight on the page bg. */
-.filmstrip--marquee .filmstrip__viewport--marquee { overflow: hidden; padding: 22px 0; }
+.filmstrip--marquee .filmstrip__viewport--marquee { overflow: hidden; padding: 46px 0 28px; position: relative; }
 .filmstrip__kicker { margin: 0 0 26px; text-align: center; font-size: 10px; font-weight: 600; letter-spacing: .34em; text-transform: uppercase; color: var(--muted); position: relative; z-index: 1; }
-.filmstrip__marquee { display: flex; gap: clamp(10px, 1.4vw, 20px); width: max-content; animation: filmstrip-scroll 90s linear infinite; padding: 6px 0 10px; }
+.filmstrip__marquee { display: flex; gap: clamp(10px, 1.4vw, 20px); width: max-content; animation: filmstrip-scroll 90s linear infinite; padding: 18px 0 22px; }
 .filmstrip--marquee .filmstrip__marquee { animation-play-state: running; }
 @keyframes filmstrip-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .filmstrip__cell { position: relative; display: block; width: clamp(153px, 17.9vw, 221px); flex: none; border: 0; padding: 0; background: none; cursor: zoom-in; transform: rotate(var(--tilt, 0deg)); transition: transform 400ms ease; }
@@ -309,6 +309,584 @@ main { position: relative; z-index: 1; }
   .viewer__close { top: 14px; right: 14px; width: 40px; height: 40px; }
   .site-footer { justify-content: center; text-align: center; }
   .site-footer span { display: none; }
+}
+
+/* ==========================================================================
+   Realistic Animated Flashing LED Light Strips (Amazon SMD 5050 RGB Style)
+   ========================================================================== */
+
+.led-strip-container {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 5;
+  user-select: none;
+}
+
+.led-strip--top {
+  margin-bottom: 2px;
+}
+
+.led-strip--bottom {
+  margin-top: 2px;
+}
+
+/* Diffuse ambient wall wash and stage backlighting */
+.led-strip__ambient-wash {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 52px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.85;
+  mix-blend-mode: screen;
+  filter: blur(18px);
+  transition: opacity 400ms ease;
+  will-change: opacity, transform, background;
+}
+
+.led-strip--top .led-strip__ambient-wash {
+  top: -18px;
+  background: radial-gradient(ellipse 75% 32px at 50% 26px, rgba(0, 240, 255, 0.48) 0%, rgba(236, 72, 153, 0.22) 50%, transparent 80%);
+}
+
+.led-strip--bottom .led-strip__ambient-wash {
+  bottom: -18px;
+  background: radial-gradient(ellipse 75% 32px at 50% 26px, rgba(0, 240, 255, 0.48) 0%, rgba(236, 72, 153, 0.22) 50%, transparent 80%);
+}
+
+/* Flexible Matte-Black PCB Ribbon Tape */
+.led-strip {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  height: 18px;
+  width: 100%;
+  background: linear-gradient(180deg, #111218 0%, #1a1c25 45%, #181a23 55%, #0d0e13 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.9);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.9);
+  overflow: visible;
+  border-radius: 2px;
+}
+
+/* Dual Copper Bus Rails */
+.led-strip__bus-rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  pointer-events: none;
+  background: repeating-linear-gradient(90deg, #b87333 0, #c88a48 18px, #9e5b22 36px);
+  opacity: 0.85;
+  box-shadow: 0 0 2px rgba(200, 138, 72, 0.4);
+}
+
+.led-strip__bus-rail--top {
+  top: 1px;
+}
+
+.led-strip__bus-rail--bottom {
+  bottom: 1px;
+}
+
+/* Diodes Track Layout */
+.led-strip__track {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 8px;
+  gap: 2px;
+}
+
+.led-strip__node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* SMD 5050 LED Package */
+.led-smd-5050 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* Solder Lead Pins (3 per side) */
+.led-smd-5050__pins {
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  width: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.led-smd-5050__pins--left {
+  left: -2px;
+}
+
+.led-smd-5050__pins--right {
+  right: -2px;
+}
+
+.led-smd-5050__pins span {
+  display: block;
+  width: 2px;
+  height: 2px;
+  background: linear-gradient(90deg, #d2d6dc, #8b929e);
+  border-radius: 0.5px;
+}
+
+/* 5050 Chip Enclosure with Chamfer Notch */
+.led-smd-5050__package {
+  position: relative;
+  width: 12px;
+  height: 11px;
+  background: linear-gradient(135deg, #2b2d37 0%, #16171e 100%);
+  border: 1px solid #3d404f;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.led-smd-5050__notch {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 3px;
+  background: #111217;
+  border-bottom-right-radius: 2px;
+  pointer-events: none;
+}
+
+/* Circular Silicone Phosphor Lens Dome */
+.led-smd-5050__lens {
+  position: relative;
+  width: 7.5px;
+  height: 7.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #d6ae5a 0%, #826529 60%, #302611 100%);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Microscopic RGB Dies */
+.led-smd-5050__die {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  border-radius: 50%;
+  opacity: 0.65;
+}
+
+.led-smd-5050__die--r { top: 2px; left: 2px; background: #ff2a3b; }
+.led-smd-5050__die--g { top: 2px; right: 2px; background: #26ff5a; }
+.led-smd-5050__die--b { bottom: 2px; left: 3px; background: #2b80ff; }
+
+/* Glowing Luminous Emitter Core */
+.led-smd-5050__core {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+/* 151 SMD Resistor on PCB */
+.led-strip__smd-resistor {
+  position: absolute;
+  right: -9px;
+  width: 6px;
+  height: 3px;
+  background: #08080b;
+  border: 0.5px solid #2e303a;
+  border-radius: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset -1px 0 0 #a0a5af, inset 1px 0 0 #a0a5af;
+  z-index: 1;
+}
+
+.led-strip__smd-resistor span {
+  font-size: 3px;
+  font-family: monospace;
+  color: #8b929e;
+  line-height: 1;
+  transform: scale(0.65);
+}
+
+/* Solder Pad Segments & Scissor Cut Marks */
+.led-strip__solder-pad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 0 2px;
+  margin: 0 1px;
+  flex-shrink: 0;
+}
+
+.led-strip__pads {
+  display: flex;
+  gap: 1.5px;
+}
+
+.led-strip__pads span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5px;
+  height: 3.5px;
+  background: linear-gradient(135deg, #d89b53 0%, #a7662c 100%);
+  color: #1a1005;
+  font-size: 3px;
+  font-weight: 700;
+  border-radius: 0.5px;
+  line-height: 1;
+}
+
+.led-strip__cut-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 4px;
+}
+
+.led-strip__scissor-icon {
+  width: 5px;
+  height: 5px;
+  color: rgba(216, 155, 83, 0.7);
+}
+
+/* ==========================================================================
+   Lighting Modes & Keyframe Animations
+   ========================================================================== */
+
+/* Speed multipliers */
+.led-strip--speed-fast { --speed-mult: 0.55; }
+.led-strip--speed-normal { --speed-mult: 1; }
+.led-strip--speed-chill { --speed-mult: 1.8; }
+
+/* 1. AMAZON PARTY FLASH / STROBE MODE */
+.led-strip--mode-flash .led-smd-5050__core {
+  opacity: 1;
+  animation: led-amazon-flash calc(1.3s * var(--speed-mult, 1)) infinite ease-in-out;
+  animation-delay: calc((var(--diode-i, 0) % 6) * 0.11s);
+}
+
+.led-strip--mode-flash .led-strip__ambient-wash {
+  opacity: 0.95;
+  animation: led-ambient-flash calc(1.3s * var(--speed-mult, 1)) infinite ease-in-out;
+}
+
+@keyframes led-amazon-flash {
+  0%, 100% {
+    background: radial-gradient(circle, #ffffff 18%, #00f0ff 48%, #0066ff 85%);
+    box-shadow: 0 0 6px #00f0ff, 0 0 14px #0066ff, 0 0 28px rgba(0, 240, 255, 0.7);
+  }
+  16% {
+    background: radial-gradient(circle, #ffffff 22%, #ff0077 50%, #8800ff 85%);
+    box-shadow: 0 0 9px #ff0077, 0 0 20px #8800ff, 0 0 35px rgba(255, 0, 119, 0.85);
+  }
+  24% {
+    background: radial-gradient(circle, #ffffff 15%, #ffff00 45%, #ff5500 85%);
+    box-shadow: 0 0 5px #ffff00, 0 0 12px #ff5500, 0 0 20px rgba(255, 85, 0, 0.6);
+  }
+  36% {
+    opacity: 0.2;
+    box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+  }
+  44% {
+    background: radial-gradient(circle, #ffffff 25%, #00ff66 45%, #00aa44 80%);
+    box-shadow: 0 0 10px #00ff66, 0 0 22px #00aa44, 0 0 38px rgba(0, 255, 102, 0.9);
+  }
+  62% {
+    background: radial-gradient(circle, #ffffff 18%, #9d00ff 45%, #4b0082 80%);
+    box-shadow: 0 0 7px #9d00ff, 0 0 16px #4b0082, 0 0 28px rgba(157, 0, 255, 0.65);
+  }
+  74% {
+    opacity: 0.15;
+    box-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+  }
+  84% {
+    background: radial-gradient(circle, #ffffff 25%, #ff0033 50%, #990011 85%);
+    box-shadow: 0 0 11px #ff0033, 0 0 24px #990011, 0 0 40px rgba(255, 0, 51, 0.95);
+  }
+}
+
+@keyframes led-ambient-flash {
+  0%, 100% {
+    background: radial-gradient(ellipse 75% 32px at 50% 50%, rgba(0, 240, 255, 0.55) 0%, rgba(0, 102, 255, 0.22) 50%, transparent 80%);
+    transform: scaleY(1);
+  }
+  16% {
+    background: radial-gradient(ellipse 80% 36px at 50% 50%, rgba(255, 0, 119, 0.65) 0%, rgba(136, 0, 255, 0.28) 50%, transparent 80%);
+    transform: scaleY(1.22);
+  }
+  36% {
+    opacity: 0.22;
+    transform: scaleY(0.75);
+  }
+  44% {
+    background: radial-gradient(ellipse 80% 36px at 50% 50%, rgba(0, 255, 102, 0.65) 0%, rgba(0, 170, 68, 0.28) 50%, transparent 80%);
+    transform: scaleY(1.26);
+  }
+  74% {
+    opacity: 0.18;
+  }
+  84% {
+    background: radial-gradient(ellipse 85% 42px at 50% 50%, rgba(255, 0, 51, 0.7) 0%, rgba(153, 0, 17, 0.32) 50%, transparent 80%);
+    transform: scaleY(1.3);
+  }
+}
+
+/* 2. RAINBOW CHASE MODE */
+.led-strip--mode-rainbow .led-smd-5050__core {
+  opacity: 1;
+  animation: led-rainbow-chase calc(3.2s * var(--speed-mult, 1)) infinite linear;
+  animation-delay: calc(var(--diode-i, 0) * -0.11s);
+}
+
+.led-strip--mode-rainbow .led-strip__ambient-wash {
+  opacity: 0.88;
+  background: linear-gradient(90deg, 
+    rgba(255,0,0,0.45), 
+    rgba(255,150,0,0.45), 
+    rgba(255,255,0,0.45), 
+    rgba(0,255,0,0.45), 
+    rgba(0,240,255,0.45), 
+    rgba(0,80,255,0.45), 
+    rgba(220,0,255,0.45), 
+    rgba(255,0,0,0.45)
+  );
+  background-size: 200% 100%;
+  animation: led-rainbow-ambient calc(3.2s * var(--speed-mult, 1)) infinite linear;
+}
+
+@keyframes led-rainbow-chase {
+  0%   { background: radial-gradient(circle, #fff 18%, #ff0055 50%, #aa0022 80%); box-shadow: 0 0 7px #ff0055, 0 0 18px rgba(255,0,85,0.75); }
+  16%  { background: radial-gradient(circle, #fff 18%, #ff8800 50%, #aa4400 80%); box-shadow: 0 0 7px #ff8800, 0 0 18px rgba(255,136,0,0.75); }
+  33%  { background: radial-gradient(circle, #fff 18%, #ffff00 50%, #aaaa00 80%); box-shadow: 0 0 7px #ffff00, 0 0 18px rgba(255,255,0,0.75); }
+  50%  { background: radial-gradient(circle, #fff 18%, #00ff66 50%, #009933 80%); box-shadow: 0 0 7px #00ff66, 0 0 18px rgba(0,255,102,0.75); }
+  66%  { background: radial-gradient(circle, #fff 18%, #00e1ff 50%, #0077aa 80%); box-shadow: 0 0 7px #00e1ff, 0 0 18px rgba(0,225,255,0.75); }
+  83%  { background: radial-gradient(circle, #fff 18%, #aa00ff 50%, #5500aa 80%); box-shadow: 0 0 7px #aa00ff, 0 0 18px rgba(170,0,255,0.75); }
+  100% { background: radial-gradient(circle, #fff 18%, #ff0055 50%, #aa0022 80%); box-shadow: 0 0 7px #ff0055, 0 0 18px rgba(255,0,85,0.75); }
+}
+
+@keyframes led-rainbow-ambient {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* 3. NEON PULSE MODE */
+.led-strip--mode-pulse .led-smd-5050__core {
+  opacity: 1;
+  background: radial-gradient(circle, #ffffff 22%, #00f0ff 50%, #7000ff 85%);
+  animation: led-neon-pulse calc(2.2s * var(--speed-mult, 1)) infinite ease-in-out;
+  animation-delay: calc((var(--diode-i, 0) % 4) * 0.14s);
+}
+
+.led-strip--mode-pulse .led-strip__ambient-wash {
+  opacity: 0.9;
+  background: radial-gradient(ellipse 75% 34px at 50% 50%, rgba(0, 240, 255, 0.55) 0%, rgba(112, 0, 255, 0.28) 50%, transparent 80%);
+  animation: led-ambient-pulse calc(2.2s * var(--speed-mult, 1)) infinite ease-in-out;
+}
+
+@keyframes led-neon-pulse {
+  0%, 100% {
+    opacity: 0.4;
+    box-shadow: 0 0 5px #00f0ff, 0 0 12px rgba(112, 0, 255, 0.55);
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 10px #00f0ff, 0 0 24px rgba(112, 0, 255, 0.9), 0 0 38px rgba(0, 240, 255, 0.65);
+    transform: scale(1.18);
+  }
+}
+
+@keyframes led-ambient-pulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
+}
+
+/* 4. WARM WHITE / GALLERY AMBIENT */
+.led-strip--mode-warm .led-smd-5050__core {
+  opacity: 1;
+  background: radial-gradient(circle, #ffffff 32%, #ffde94 65%, #ffa533 100%);
+  box-shadow: 0 0 7px #ffde94, 0 0 18px rgba(255, 165, 51, 0.7), 0 0 32px rgba(255, 222, 148, 0.45);
+}
+
+.led-strip--mode-warm .led-strip__ambient-wash {
+  opacity: 0.75;
+  background: radial-gradient(ellipse 75% 30px at 50% 50%, rgba(255, 222, 148, 0.5) 0%, rgba(255, 165, 51, 0.24) 50%, transparent 80%);
+}
+
+/* 5. OFF MODE */
+.led-strip--mode-off .led-smd-5050__core {
+  opacity: 0 !important;
+  box-shadow: none !important;
+}
+
+.led-strip--mode-off .led-strip__ambient-wash {
+  opacity: 0 !important;
+}
+
+/* ==========================================================================
+   Amazon-Style Inline 3-Button Controller
+   ========================================================================== */
+
+.led-controller {
+  position: absolute;
+  top: -34px;
+  right: 8px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #14151b;
+  border: 1px solid #2b2d39;
+  border-radius: 20px;
+  padding: 3px 8px 3px 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.led-controller__body {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.led-controller__brand {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #72778a;
+  padding-right: 5px;
+  border-right: 1px solid #282a36;
+}
+
+.led-controller__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #20222b;
+  border: 1px solid #333646;
+  color: #b0b4c3;
+  cursor: pointer;
+  padding: 0;
+  transition: all 180ms ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.led-controller__btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.led-controller__btn:hover:not(:disabled) {
+  background: #2c2f3d;
+  color: #ffffff;
+  border-color: #4b4e62;
+  transform: translateY(-1px);
+}
+
+.led-controller__btn:active:not(:disabled) {
+  transform: translateY(1px);
+  background: #181921;
+}
+
+.led-controller__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.led-controller__btn--on {
+  color: #00ffaa;
+  border-color: rgba(0, 255, 170, 0.55);
+}
+
+.led-controller__indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-left: 2px;
+  transition: background-color 300ms ease, box-shadow 300ms ease;
+}
+
+.led-controller__badge {
+  font-size: 8px;
+  font-weight: 700;
+  color: #8d92a6;
+  letter-spacing: 0.05em;
+  padding-left: 5px;
+  border-left: 1px solid #282a36;
+}
+
+.led-controller__cord {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .led-controller {
+    top: -30px;
+    right: 2px;
+    padding: 2px 6px;
+    gap: 4px;
+  }
+  .led-controller__btn {
+    width: 20px;
+    height: 20px;
+  }
+  .led-controller__btn svg {
+    width: 10px;
+    height: 10px;
+  }
+  .led-controller__brand, .led-controller__badge {
+    display: none;
+  }
+  .led-smd-5050 {
+    width: 11px;
+    height: 10px;
+  }
+  .led-smd-5050__package {
+    width: 9px;
+    height: 9px;
+  }
+  .led-smd-5050__lens {
+    width: 5.5px;
+    height: 5.5px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

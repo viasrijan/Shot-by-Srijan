@@ -1,27 +1,41 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Photo } from "../data/photos";
 import { playShutter } from "./sfx";
+import LedStrip, { type LedMode, type LedSpeed } from "./LedStrip";
 
 interface FilmstripProps {
   photos: Photo[];
   onOpen: (photo: Photo) => void;
 }
 
-function LedStrip({ position }: { position: "top" | "bottom" }) {
-  return (
-    <div className={`led-strip led-strip--${position}`} aria-hidden="true">
-      <div className="led-strip__diodes">
-        {Array.from({ length: 38 }).map((_, i) => (
-          <span key={i} className="led-dot" />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
   const doubled = [...photos, ...photos];
   const played = useRef(false);
+
+  // Synchronized LED strip settings (Amazon-style RGB strip controls)
+  const [ledMode, setLedMode] = useState<LedMode>("flash");
+  const [ledSpeed, setLedSpeed] = useState<LedSpeed>("normal");
+
+  const cycleMode = useCallback(() => {
+    const modes: LedMode[] = ["flash", "rainbow", "pulse", "warm"];
+    setLedMode((curr) => {
+      if (curr === "off") return "flash";
+      const nextIdx = (modes.indexOf(curr) + 1) % modes.length;
+      return modes[nextIdx];
+    });
+  }, []);
+
+  const cycleSpeed = useCallback(() => {
+    const speeds: LedSpeed[] = ["chill", "normal", "fast"];
+    setLedSpeed((curr) => {
+      const nextIdx = (speeds.indexOf(curr) + 1) % speeds.length;
+      return speeds[nextIdx];
+    });
+  }, []);
+
+  const togglePower = useCallback(() => {
+    setLedMode((curr) => (curr === "off" ? "flash" : "off"));
+  }, []);
 
   useEffect(() => {
     if (played.current) return;
@@ -35,8 +49,17 @@ export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
   return (
     <section className="filmstrip filmstrip--marquee" aria-label="Full-width moving slideshow">
       <div className="filmstrip__viewport filmstrip__viewport--marquee">
-        <LedStrip position="top" />
-        <LedStrip position="bottom" />
+        {/* Realistic Amazon-style Animated Flashing LED Strip (Above Slider Images) */}
+        <LedStrip
+          position="top"
+          mode={ledMode}
+          speed={ledSpeed}
+          showController={true}
+          onCycleMode={cycleMode}
+          onCycleSpeed={cycleSpeed}
+          onTogglePower={togglePower}
+        />
+
         <div className="filmstrip__marquee">
           {doubled.map((photo, i) => (
             <button
@@ -56,6 +79,13 @@ export default function Filmstrip({ photos, onOpen }: FilmstripProps) {
             </button>
           ))}
         </div>
+
+        {/* Realistic Amazon-style Animated Flashing LED Strip (Below Slider Images) */}
+        <LedStrip
+          position="bottom"
+          mode={ledMode}
+          speed={ledSpeed}
+        />
       </div>
     </section>
   );

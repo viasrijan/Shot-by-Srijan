@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { formatCamera, type Photo } from "../data/photos";
 import HandFrame from "./HandFrame";
+import LedStrip, { type LedMode, type LedSpeed } from "./LedStrip";
 
 interface SliderProps {
   photos: Photo[];
@@ -12,6 +13,31 @@ export default function Slider({ photos, onOpen }: SliderProps) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchX = useRef<number | null>(null);
+
+  // Synchronized LED strip settings (Amazon-style RGB strip controls)
+  const [ledMode, setLedMode] = useState<LedMode>("flash");
+  const [ledSpeed, setLedSpeed] = useState<LedSpeed>("normal");
+
+  const cycleMode = useCallback(() => {
+    const modes: LedMode[] = ["flash", "rainbow", "pulse", "warm"];
+    setLedMode((curr) => {
+      if (curr === "off") return "flash";
+      const nextIdx = (modes.indexOf(curr) + 1) % modes.length;
+      return modes[nextIdx];
+    });
+  }, []);
+
+  const cycleSpeed = useCallback(() => {
+    const speeds: LedSpeed[] = ["chill", "normal", "fast"];
+    setLedSpeed((curr) => {
+      const nextIdx = (speeds.indexOf(curr) + 1) % speeds.length;
+      return speeds[nextIdx];
+    });
+  }, []);
+
+  const togglePower = useCallback(() => {
+    setLedMode((curr) => (curr === "off" ? "flash" : "off"));
+  }, []);
 
   const go = useCallback((step: number) => setIndex((i) => (i + step + count) % count), [count]);
 
@@ -32,6 +58,18 @@ export default function Slider({ photos, onOpen }: SliderProps) {
         <span>01 — Selected frames</span>
         <span>{String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}</span>
       </div>
+
+      {/* Realistic Amazon-style Animated Flashing LED Strip (Above Slider Images) */}
+      <LedStrip
+        position="top"
+        mode={ledMode}
+        speed={ledSpeed}
+        showController={true}
+        onCycleMode={cycleMode}
+        onCycleSpeed={cycleSpeed}
+        onTogglePower={togglePower}
+      />
+
       <div
         className="slider__stage"
         onTouchStart={(event) => {
@@ -72,6 +110,14 @@ export default function Slider({ photos, onOpen }: SliderProps) {
           </svg>
         </button>
       </div>
+
+      {/* Realistic Amazon-style Animated Flashing LED Strip (Below Slider Images) */}
+      <LedStrip
+        position="bottom"
+        mode={ledMode}
+        speed={ledSpeed}
+      />
+
       <div className="slider__dots">
         {photos.map((photo, i) => (
           <button
